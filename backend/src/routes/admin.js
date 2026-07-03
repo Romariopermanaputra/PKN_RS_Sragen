@@ -10,6 +10,7 @@ const achievementController = require('../controllers/achievementController');
 const promotionController = require('../controllers/promotionController');
 const contactController = require('../controllers/contactController');
 const settingController = require('../controllers/settingController');
+const dashboardController = require('../controllers/dashboardController');
 
 router.use(authMiddleware);
 
@@ -39,6 +40,12 @@ const handleUploadError = (err, req, res, next) => {
 router.get('/', (req, res) => {
   res.json({ message: 'Admin API' });
 });
+
+// =====================
+// DASHBOARD
+// =====================
+router.get('/dashboard/stats', dashboardController.getStats);
+router.get('/dashboard/activities', dashboardController.getActivities);
 
 // =====================
 // DOCTORS

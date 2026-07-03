@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
-import { IoMenu, IoClose } from 'react-icons/io5';
+import { IoMenu, IoClose, IoChevronBack, IoChevronForward } from 'react-icons/io5';
 
 const navItems = [
   { path: '/admin', label: 'Dashboard', icon: 'layout-dashboard' },
@@ -16,7 +16,8 @@ const navItems = [
 export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // For mobile
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false); // For desktop
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -73,21 +74,54 @@ export default function AdminLayout() {
       {/* Sidebar */}
       <aside 
         style={{
-          width: '256px',
+          width: sidebarCollapsed ? '80px' : '256px',
           background: 'linear-gradient(180deg, #346739 0%, #28512d 100%)',
           color: 'white',
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
-          transition: 'transform 0.3s ease',
-          boxShadow: '18px 0 45px rgba(52,103,57,0.18)'
+          transition: 'width 0.3s ease, transform 0.3s ease',
+          boxShadow: '18px 0 45px rgba(52,103,57,0.18)',
+          zIndex: '999'
         }}
-        className="admin-sidebar"
+        className={`admin-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}
       >
         <div style={{
-          padding: '22px 18px',
-          borderBottom: '1px solid rgba(242,237,194,0.18)'
+          padding: sidebarCollapsed ? '22px 10px' : '22px 18px',
+          borderBottom: '1px solid rgba(242,237,194,0.18)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: sidebarCollapsed ? 'center' : 'flex-start',
+          position: 'relative',
+          transition: 'all 0.3s'
         }}>
+          {/* Toggle Button for Desktop */}
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            style={{
+              position: 'absolute',
+              top: '22px',
+              right: sidebarCollapsed ? '50%' : '18px',
+              transform: sidebarCollapsed ? 'translateX(50%)' : 'none',
+              background: 'rgba(242,237,194,0.15)',
+              border: 'none',
+              color: '#F2EDC2',
+              width: '28px',
+              height: '28px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              zIndex: '10',
+              transition: 'all 0.2s'
+            }}
+            className="desktop-toggle-btn"
+            title={sidebarCollapsed ? "Perluas menu" : "Tutup menu"}
+          >
+            {sidebarCollapsed ? <IoChevronForward size={16} /> : <IoChevronBack size={16} />}
+          </button>
+
           <div style={{
             width: '42px',
             height: '42px',
@@ -97,13 +131,19 @@ export default function AdminLayout() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            marginBottom: '12px',
-            boxShadow: '0 14px 28px rgba(0,0,0,0.14)'
+            marginBottom: sidebarCollapsed ? '0' : '12px',
+            marginTop: sidebarCollapsed ? '40px' : '0',
+            boxShadow: '0 14px 28px rgba(0,0,0,0.14)',
+            transition: 'all 0.3s'
           }}>
             <i className="ti ti-heartbeat" style={{fontSize: '24px'}} />
           </div>
-          <div style={{fontSize: '21px', fontWeight: '800', lineHeight: 1.15}}>Admin Panel</div>
-          <div style={{fontSize: '12px', color: '#F2EDC2', marginTop: '6px'}}>RSU PKU Muhammadiyah Sragen</div>
+          {!sidebarCollapsed && (
+            <div className="sidebar-text" style={{ overflow: 'hidden', whiteSpace: 'nowrap', transition: 'opacity 0.2s' }}>
+              <div style={{fontSize: '21px', fontWeight: '800', lineHeight: 1.15}}>Admin Panel</div>
+              <div style={{fontSize: '12px', color: '#F2EDC2', marginTop: '6px'}}>RSU PKU Muhammadiyah Sragen</div>
+            </div>
+          )}
         </div>
         <nav style={{
           flex: '1',
@@ -121,11 +161,13 @@ export default function AdminLayout() {
                 to={item.path}
                 onClick={handleLinkClick}
                 className="admin-nav-link"
+                title={sidebarCollapsed ? item.label : ""}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '10px',
-                  padding: '12px 14px',
+                  justifyContent: sidebarCollapsed ? 'center' : 'flex-start',
+                  gap: sidebarCollapsed ? '0' : '10px',
+                  padding: sidebarCollapsed ? '12px 0' : '12px 14px',
                   borderRadius: '8px',
                   color: isActive ? '#346739' : 'rgba(255,255,255,0.9)',
                   textDecoration: 'none',
@@ -135,34 +177,43 @@ export default function AdminLayout() {
                   fontWeight: isActive ? 700 : 500
                 }}
               >
-                <i className={`ti ti-${item.icon}`} style={{fontSize: '18px'}} />
-                <span>{item.label}</span>
+                <i className={`ti ti-${item.icon}`} style={{fontSize: '20px'}} />
+                {!sidebarCollapsed && <span className="sidebar-text" style={{ whiteSpace: 'nowrap' }}>{item.label}</span>}
               </Link>
             );
           })}
         </nav>
         <div style={{
           padding: '16px',
-          borderTop: '1px solid rgba(242,237,194,0.18)'
+          borderTop: '1px solid rgba(242,237,194,0.18)',
+          display: 'flex',
+          justifyContent: 'center'
         }}>
           <button 
             onClick={handleLogout}
+            title={sidebarCollapsed ? "Logout" : ""}
             style={{
-              width: '100%',
+              width: sidebarCollapsed ? '42px' : '100%',
+              height: sidebarCollapsed ? '42px' : 'auto',
               backgroundColor: '#F2EDC2',
-              padding: '12px 16px',
+              padding: sidebarCollapsed ? '0' : '12px 16px',
               borderRadius: '8px',
               color: '#346739',
               border: '1px solid rgba(242,237,194,0.35)',
               cursor: 'pointer',
-              transition: 'background 0.2s',
+              transition: 'background 0.2s, width 0.3s ease',
               fontSize: '14px',
-              fontWeight: '700'
+              fontWeight: '700',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
             }}
             onMouseEnter={(e) => e.target.style.backgroundColor = '#9FCB98'}
             onMouseLeave={(e) => e.target.style.backgroundColor = '#F2EDC2'}
           >
-            Logout
+            <i className="ti ti-logout" style={{ fontSize: '18px' }} />
+            {!sidebarCollapsed && <span className="sidebar-text">Logout</span>}
           </button>
         </div>
       </aside>
@@ -187,6 +238,12 @@ export default function AdminLayout() {
           transform: translateX(3px);
         }
 
+        @media (max-width: 1024px) {
+          .desktop-toggle-btn {
+            display: none !important;
+          }
+        }
+
         @media (max-width: 768px) {
           .admin-mobile-menu-btn {
             display: block !important;
@@ -197,12 +254,17 @@ export default function AdminLayout() {
           }
 
           .admin-sidebar {
-            position: fixed;
+            position: fixed !important;
             left: 0;
             top: 0;
             height: 100vh;
+            width: 256px !important;
             z-index: 999;
             transform: ${sidebarOpen ? 'translateX(0)' : 'translateX(-100%)'};
+          }
+          
+          .admin-sidebar .sidebar-text {
+            display: block !important;
           }
 
           .admin-main {
@@ -216,7 +278,7 @@ export default function AdminLayout() {
           }
 
           .admin-sidebar {
-            width: 200px;
+            width: 230px !important;
           }
         }
       `}</style>
