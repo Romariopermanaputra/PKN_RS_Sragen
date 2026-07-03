@@ -12,6 +12,7 @@ const emptyForm = {
   jumlah_tersedia: 0,
   status_aktif: true,
   gambar: null,
+  gambar_url: null, // ✅ TAMBAHKAN INI agar state gambar_url terdefinisi
 };
 
 export default function FacilitiesAdmin() {
@@ -39,10 +40,6 @@ export default function FacilitiesAdmin() {
   const fetchData = async () => {
     try {
       const res = await api.get('/admin/facilities');
-      console.log('📦 Data dari API:', res.data); // ✅ DEBUG: Lihat struktur data
-      if (res.data.length > 0) {
-        console.log('📸 Contoh gambar_url:', res.data[0].gambar_url);
-      }
       setFacilities(res.data);
     } catch (err) { 
       console.error('❌ Error fetch:', err);
@@ -59,9 +56,10 @@ export default function FacilitiesAdmin() {
     data.append('harga_mulai', formData.harga_mulai);
     data.append('jumlah_tersedia', formData.jumlah_tersedia);
     data.append('status_aktif', formData.status_aktif ? 'true' : 'false');
-    if (formData.gambar) {
+    
+    // ✅ PERBAIKAN: Hanya append gambar jika itu benar-benar File object (gambar baru)
+    if (formData.gambar instanceof File) {
       data.append('gambar', formData.gambar);
-      console.log('📤 Upload gambar:', formData.gambar.name);
     }
 
     try {
@@ -81,7 +79,6 @@ export default function FacilitiesAdmin() {
   };
 
   const handleEdit = (f) => {
-    console.log('✏️ Edit facility:', f); // ✅ DEBUG: Lihat data yang di-edit
     setFormData({
       id: f.id,
       nama: f.nama || '',
@@ -89,8 +86,8 @@ export default function FacilitiesAdmin() {
       harga_mulai: f.harga_mulai ?? '',
       jumlah_tersedia: f.jumlah_tersedia ?? 0,
       status_aktif: f.status_aktif ?? true,
-      gambar: null,
-      gambar_url: f.gambar_url || f.gambar, // ✅ Ambil dari field manapun
+      gambar: null, // Reset objek file
+      gambar_url: f.gambar_url || f.gambar || null, // Simpan nama file string dari database
     });
     setIsEditing(true);
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -103,12 +100,23 @@ export default function FacilitiesAdmin() {
     }
   };
 
-  // ✅ Fungsi helper untuk URL gambar
+  // ✅ Fungsi helper untuk URL gambar dari database (selalu string)
   const getImageUrl = (filename) => {
-    if (!filename) return null;
-    const url = `${BACKEND_URL}/uploads/${filename}`;
-    console.log('🖼️ Image URL:', url); // ✅ DEBUG: Lihat URL yang dibuat
-    return url;
+    if (!filename || typeof filename !== 'string') return null;
+    return `${BACKEND_URL}/uploads/${filename}`;
+  };
+
+  // ✅ Fungsi SMART untuk preview gambar di form (menangani File object & String)
+  const getPreviewUrl = () => {
+    // 1. Jika user baru saja memilih file dari komputer (File object)
+    if (formData.gambar instanceof File) {
+      return URL.createObjectURL(formData.gambar); // Buat URL lokal sementara
+    }
+    // 2. Jika sedang edit dan ada gambar lama dari database (String)
+    if (formData.gambar_url && typeof formData.gambar_url === 'string') {
+      return getImageUrl(formData.gambar_url);
+    }
+    return null;
   };
 
   const filteredFacilities = facilities.filter((item) => {
@@ -154,12 +162,16 @@ export default function FacilitiesAdmin() {
           <div>
             <label className="block text-sm">Gambar</label>
             <input type="file" accept="image/*" onChange={e => setFormData({...formData, gambar: e.target.files[0]})} />
-            {isEditing && (formData.gambar_url || formData.gambar) && (
+            
+            {/* ✅ PERBAIKAN UTAMA: Gunakan getPreviewUrl() yang pintar */}
+            {getPreviewUrl() && (
               <div className="mt-2">
-                <p className="text-xs text-gray-500">Gambar saat ini:</p>
+                <p className="text-xs text-gray-500">
+                  {formData.gambar instanceof File ? 'Preview gambar baru:' : 'Gambar saat ini:'}
+                </p>
                 <img 
-                  src={getImageUrl(formData.gambar_url || formData.gambar)}
-                  alt="Current" 
+                  src={getPreviewUrl()}
+                  alt="Preview" 
                   className="w-24 h-24 object-cover rounded mt-1 border"
                   onError={(e) => {
                     console.error('❌ Gagal load gambar:', e.target.src);
@@ -216,6 +228,7 @@ export default function FacilitiesAdmin() {
         </thead>
         <tbody>
           {filteredFacilities.map(f => {
+            // Di tabel, data dari API pasti string, jadi aman pakai getImageUrl
             const imageUrl = getImageUrl(f.gambar_url || f.gambar);
             return (
               <tr key={f.id} className="border-t hover:bg-gray-50">

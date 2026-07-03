@@ -65,7 +65,9 @@ export default function Doctors() {
               >
                 <option value="">Semua Spesialis</option>
                 {specialties.map(spec => (
-                  <option key={spec} value={spec}>{spec}</option>
+                  <option key={spec.id_spesialis} value={spec.nama_spesialis}>
+                    {spec.nama_spesialis}
+                  </option>
                 ))}
               </select>
             </div>
@@ -76,7 +78,9 @@ export default function Doctors() {
               >
                 <option value="">Semua Subspesialis</option>
                 {subspecialties.map(sub => (
-                  <option key={sub} value={sub}>{sub}</option>
+                  <option key={sub.id_subspesialis} value={sub.nama_subspesialis}>
+                    {sub.nama_subspesialis}
+                  </option>
                 ))}
               </select>
             </div>

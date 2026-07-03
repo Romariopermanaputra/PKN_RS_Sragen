@@ -5,7 +5,11 @@ export const IMAGE_URL = base.replace('/api', '/uploads/');
 
 const api = axios.create({
   baseURL: base,
-  headers: { 'Content-Type': 'application/json' },
+  // ✅ PERBAIKAN UTAMA: 
+  // HAPUS baris 'headers: { "Content-Type": "application/json" }' dari sini.
+  // Biarkan Axios mendeteksi Content-Type secara otomatis.
+  // Jika dikirim objek biasa -> otomatis jadi application/json
+  // Jika dikirim FormData -> otomatis jadi multipart/form-data (dengan boundary yang benar)
 })
 
 api.interceptors.request.use((config) => {

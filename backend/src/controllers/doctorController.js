@@ -47,10 +47,17 @@ const parseBoolean = (value, defaultValue = true) => {
   return ['true', '1', 'yes', 'on', 'aktif'].includes(String(value).toLowerCase());
 };
 
-const findOrCreateSpecialty = async (name) => {
-  const trimmed = String(name || '').trim();
-  if (!trimmed) return undefined;
-
+// ✅ UPDATE: Helper baru yang bisa menerima input berupa ID (angka) atau Nama (string)
+const getSpecialtyId = async (input) => {
+  if (!input) return undefined;
+  const trimmed = String(input).trim();
+  
+  // Jika input adalah angka (ID), langsung kembalikan sebagai number
+  if (/^\d+$/.test(trimmed)) {
+    return parseInt(trimmed, 10);
+  }
+  
+  // Jika input adalah string (nama), cari atau buat
   const existing = await prisma.spesialis.findFirst({
     where: { nama_spesialis: trimmed },
   });
@@ -62,10 +69,14 @@ const findOrCreateSpecialty = async (name) => {
   return created.id_spesialis;
 };
 
-const findOrCreateSubspecialty = async (name) => {
-  const trimmed = String(name || '').trim();
-  if (!trimmed) return null;
-
+const getSubspecialtyId = async (input) => {
+  if (!input) return null;
+  const trimmed = String(input).trim();
+  
+  if (/^\d+$/.test(trimmed)) {
+    return parseInt(trimmed, 10);
+  }
+  
   const existing = await prisma.subspesialis.findFirst({
     where: { nama_subspesialis: trimmed },
   });
@@ -90,26 +101,26 @@ exports.getAll = async (req, res) => {
     res.json(doctors.map(normalizeDoctor));
   } catch (error) {
     console.error('Error fetching doctors:', error);
-    res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data dokter' });
+    res.status(500).json({ 
+      message: 'Terjadi kesalahan saat mengambil data dokter',
+      error: error.message // <-- Error detail akan muncul di Network tab browser
+    });
   }
 };
 
-// ✅ UPDATE: Terima upload foto - simpan ke database
 exports.create = async (req, res) => {
   try {
     const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif } = req.body;
-    
-    // ✅ Terima file gambar jika ada
     const foto = req.file ? req.file.filename : null;
 
-    const specialtyId = await findOrCreateSpecialty(spesialis);
-    const subspecialtyId = await findOrCreateSubspecialty(subspesialis);
+    const specialtyId = await getSpecialtyId(spesialis);
+    const subspecialtyId = await getSubspecialtyId(subspesialis);
 
     const doctor = await prisma.dokter.create({
       data: {
         nama_lengkap: nama || nama_lengkap,
         deskripsi,
-        foto_url: foto, // Akan tersimpan jika ada file
+        foto_url: foto,
         id_spesialis: specialtyId,
         id_subspesialis: subspecialtyId,
         status_aktif: parseBoolean(status_aktif, true),
@@ -123,28 +134,33 @@ exports.create = async (req, res) => {
     res.status(201).json(normalizeDoctor(doctor));
   } catch (error) {
     console.error('Error creating doctor:', error);
-    res.status(500).json({ message: 'Terjadi kesalahan saat menambah dokter' });
+    res.status(500).json({ 
+      message: 'Terjadi kesalahan saat menambah dokter',
+      error: error.message, // <-- Lihat pesan error asli di sini!
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
-// ✅ UPDATE: Terima upload foto pada update
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
     const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif } = req.body;
-    
-    // ✅ Terima file gambar jika ada
     const foto = req.file ? req.file.filename : undefined;
 
-    const specialtyId = spesialis !== undefined ? await findOrCreateSpecialty(spesialis) : undefined;
-    const subspecialtyId = subspesialis !== undefined ? await findOrCreateSubspecialty(subspesialis) : undefined;
-
     const data = {};
+    
     if (nama || nama_lengkap) data.nama_lengkap = nama || nama_lengkap;
     if (deskripsi !== undefined) data.deskripsi = deskripsi;
-    if (foto) data.foto_url = foto; // Akan update jika ada file baru
-    if (specialtyId !== undefined) data.id_spesialis = specialtyId;
-    if (subspecialtyId !== undefined) data.id_subspesialis = subspecialtyId;
+    if (foto) data.foto_url = foto;
+    
+    if (spesialis !== undefined) {
+      data.id_spesialis = await getSpecialtyId(spesialis);
+    }
+    if (subspesialis !== undefined) {
+      data.id_subspesialis = await getSubspecialtyId(subspesialis);
+    }
+    
     if (status_aktif !== undefined) data.status_aktif = parseBoolean(status_aktif, true);
 
     const doctor = await prisma.dokter.update({
@@ -159,7 +175,11 @@ exports.update = async (req, res) => {
     res.json(normalizeDoctor(doctor));
   } catch (error) {
     console.error('Error updating doctor:', error);
-    res.status(500).json({ message: 'Terjadi kesalahan saat mengupdate dokter' });
+    res.status(500).json({ 
+      message: 'Terjadi kesalahan saat mengupdate dokter',
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
@@ -180,43 +200,55 @@ exports.getById = async (req, res) => {
     res.json(normalizeDoctor(doctor));
   } catch (error) {
     console.error('Error fetching doctor detail:', error);
-    res.status(500).json({ message: 'Terjadi kesalahan saat mengambil detail dokter' });
+    res.status(500).json({ 
+      message: 'Terjadi kesalahan saat mengambil detail dokter',
+      error: error.message 
+    });
   }
 };
 
+// ✅ UPDATE: Mengembalikan objek lengkap (ID dan Nama) agar frontend lebih fleksibel
 exports.getSpecialties = async (req, res) => {
   try {
     const specialties = await prisma.spesialis.findMany({
-      select: { nama_spesialis: true },
       orderBy: { nama_spesialis: 'asc' },
     });
-    res.json(specialties.map((item) => item.nama_spesialis));
+    res.json(specialties);
   } catch (error) {
     console.error('Error fetching specialties:', error);
-    res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data spesialisasi' });
+    res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data spesialisasi', error: error.message });
   }
 };
 
 exports.getSubspecialties = async (req, res) => {
   try {
     const subspecialties = await prisma.subspesialis.findMany({
-      select: { nama_subspesialis: true },
       orderBy: { nama_subspesialis: 'asc' },
     });
-    res.json(subspecialties.map((item) => item.nama_subspesialis));
+    res.json(subspecialties);
   } catch (error) {
     console.error('Error fetching subspecialties:', error);
-    res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data subspesialisasi' });
+    res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data subspesialisasi', error: error.message });
   }
 };
 
+// ✅ UPDATE: Hapus jadwal_praktek terlebih dahulu untuk menghindari error Foreign Key
 exports.remove = async (req, res) => {
   try {
     const { id } = req.params;
+    
+    // Hapus semua jadwal praktek milik dokter ini terlebih dahulu
+    await prisma.jadwal_praktek.deleteMany({
+      where: { id_dokter: Number(id) }
+    });
+
     await prisma.dokter.delete({ where: { id_dokter: Number(id) } });
     res.json({ message: 'Dokter berhasil dihapus' });
   } catch (error) {
     console.error('Error deleting doctor:', error);
-    res.status(500).json({ message: 'Terjadi kesalahan saat menghapus dokter' });
+    res.status(500).json({ 
+      message: 'Terjadi kesalahan saat menghapus dokter',
+      error: error.message 
+    });
   }
 };

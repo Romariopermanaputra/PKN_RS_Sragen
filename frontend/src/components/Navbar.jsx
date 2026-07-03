@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import api from '../services/api'
+// import api from '../services/api' // Bisa dikomentari jika tidak dipakai lagi di file ini
 import logoImg from '../assets/logo_rs.jpg'
 import { IoMenu, IoClose, IoCallOutline, IoLocationOutline, IoTimeOutline } from 'react-icons/io5'
 
@@ -10,7 +10,22 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    api.get('/settings/linktree').then(res => setLinktree(res.data.linktree_url)).catch(() => {})
+    // ✅ PERBAIKAN: 
+    // Kita matikan sementara pemanggilan API ke '/settings/linktree' 
+    // karena tabel 'settings' belum ada di database Anda (penyebab error 500).
+    
+    // Silakan isi URL linktree/booking secara manual di bawah ini. 
+    // Jika belum ada, biarkan kosong ('').
+    const defaultLinktreeUrl = '' // Contoh: 'https://linktr.ee/rsu_pku_sragen'
+    setLinktree(defaultLinktreeUrl)
+
+    // CATATAN: Jika nanti rekan tim Anda sudah menambahkan tabel 'settings' ke database, 
+    // Anda bisa menghapus baris di atas dan mengaktifkan kembali kode di bawah ini:
+    /*
+    api.get('/settings/linktree')
+      .then(res => setLinktree(res.data.linktree_url || ''))
+      .catch(() => setLinktree(''))
+    */
     
     const handleScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', handleScroll)

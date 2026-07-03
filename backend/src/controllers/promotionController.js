@@ -39,7 +39,10 @@ exports.getAllActive = async (req, res) => {
     res.json(promotions);
   } catch (error) {
     console.error('Error fetching active promotions:', error);
-    res.status(500).json({ message: 'Terjadi kesalahan saat mengambil promo' });
+    res.status(500).json({ 
+      message: 'Terjadi kesalahan saat mengambil promo',
+      error: error.message 
+    });
   }
 };
 
@@ -51,41 +54,76 @@ exports.getAllAdmin = async (req, res) => {
     res.json(promotions);
   } catch (error) {
     console.error('Error fetching promotions:', error);
-    res.status(500).json({ message: 'Terjadi kesalahan saat mengambil promo' });
+    res.status(500).json({ 
+      message: 'Terjadi kesalahan saat mengambil promo',
+      error: error.message 
+    });
   }
 };
 
 exports.create = async (req, res) => {
   try {
+    // 🔍 [DEBUGGING] Intip apa yang diterima backend
+    console.log('\n--- 🔍 [DEBUG] CREATE PROMOTION ---');
+    console.log('📦 Request Body:', req.body);
+    console.log('🖼️ Request File:', req.file);
+    console.log('------------------------------------\n');
+
     const { judul, deskripsi, tanggal_mulai, tanggal_berakhir } = req.body;
     const gambar = req.file ? req.file.filename : null;
 
     // Validasi field wajib
     if (!judul || judul.trim() === '') {
+      if (req.file) deleteImageFile(req.file.filename);
       return res.status(400).json({ message: 'Judul promo wajib diisi' });
     }
+
+    // Parse tanggal dengan aman
+    const tglMulai = parseDate(tanggal_mulai);
+    const tglBerakhir = parseEndDate(tanggal_berakhir);
+
+    // 🔍 [DEBUGGING] Lihat data yang akan disimpan
+    console.log('💾 Data yang akan di-SAVE:', {
+      judul: judul.trim(),
+      deskripsi: deskripsi ? deskripsi.trim() : null,
+      gambar,
+      tanggal_mulai: tglMulai,
+      tanggal_berakhir: tglBerakhir,
+    });
 
     const promotion = await prisma.promotion.create({
       data: {
         judul: judul.trim(),
         deskripsi: deskripsi ? deskripsi.trim() : null,
         gambar,
-        tanggal_mulai: parseDate(tanggal_mulai),
-        tanggal_berakhir: parseEndDate(tanggal_berakhir),
+        tanggal_mulai: tglMulai,
+        tanggal_berakhir: tglBerakhir,
       },
     });
 
     res.status(201).json(promotion);
   } catch (error) {
-    console.error('Error creating promotion:', error);
+    console.error('❌ Error creating promotion:', error);
+    
     // Jika gagal, hapus file yang sudah terlanjur diupload
     if (req.file) deleteImageFile(req.file.filename);
-    res.status(500).json({ message: 'Terjadi kesalahan saat menambah promo' });
+    
+    res.status(500).json({ 
+      message: 'Terjadi kesalahan saat menambah promo',
+      error: error.message, // ✅ Detail error untuk debugging
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
 exports.update = async (req, res) => {
   try {
+    // 🔍 [DEBUGGING] Intip apa yang diterima backend
+    console.log('\n--- 🔍 [DEBUG] UPDATE PROMOTION ---');
+    console.log('📦 Request Body:', req.body);
+    console.log('🖼️ Request File:', req.file);
+    console.log('------------------------------------\n');
+
     const { id } = req.params;
     const { judul, deskripsi, tanggal_mulai, tanggal_berakhir } = req.body;
     const gambarBaru = req.file ? req.file.filename : undefined;
@@ -100,6 +138,9 @@ exports.update = async (req, res) => {
       data.tanggal_berakhir = parseEndDate(tanggal_berakhir);
     }
     if (gambarBaru) data.gambar = gambarBaru;
+
+    // 🔍 [DEBUGGING] Lihat data yang akan di-update
+    console.log('💾 Data yang akan di-UPDATE:', data);
 
     // Cegah update dengan data kosong
     if (Object.keys(data).length === 0) {
@@ -130,7 +171,7 @@ exports.update = async (req, res) => {
 
     res.json(promotion);
   } catch (error) {
-    console.error('Error updating promotion:', error);
+    console.error('❌ Error updating promotion:', error);
 
     // Cleanup file jika update gagal
     if (req.file) deleteImageFile(req.file.filename);
@@ -140,7 +181,11 @@ exports.update = async (req, res) => {
       return res.status(404).json({ message: 'Promo tidak ditemukan' });
     }
 
-    res.status(500).json({ message: 'Terjadi kesalahan saat mengupdate promo' });
+    res.status(500).json({ 
+      message: 'Terjadi kesalahan saat mengupdate promo',
+      error: error.message, // ✅ Detail error untuk debugging
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
@@ -167,12 +212,15 @@ exports.remove = async (req, res) => {
 
     res.json({ message: 'Promo berhasil dihapus' });
   } catch (error) {
-    console.error('Error deleting promotion:', error);
+    console.error('❌ Error deleting promotion:', error);
 
     if (error.code === 'P2025') {
       return res.status(404).json({ message: 'Promo tidak ditemukan' });
     }
 
-    res.status(500).json({ message: 'Terjadi kesalahan saat menghapus promo' });
+    res.status(500).json({ 
+      message: 'Terjadi kesalahan saat menghapus promo',
+      error: error.message // ✅ Detail error untuk debugging
+    });
   }
 };
