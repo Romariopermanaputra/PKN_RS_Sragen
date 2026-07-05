@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { uploadFileToSupabase, deleteFileFromSupabase } = require('../config/supabase');
 
 exports.getAll = async (req, res) => {
   try {
@@ -39,19 +40,12 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    // 🔍 [DEBUGGING] Intip apa yang diterima backend dari frontend
-    console.log('\n--- 🔍 [DEBUG] CREATE NEWS ---');
-    console.log('📦 Request Body (Judul/Isi):', req.body);
-    console.log('🖼️ Request File (Gambar):', req.file); 
-    console.log('------------------------------\n');
-
     const { judul, isi } = req.body;
-    
-    // Jika req.file ada, ambil nama filenya. Jika tidak, null.
-    const gambar = req.file ? req.file.filename : null;
+    let gambar = null;
 
-    // 🔍 [DEBUGGING] Cek data final yang siap dimasukkan ke database
-    console.log('💾 Data yang akan di-SAVE ke DB:', { judul, isi, gambar });
+    if (req.file) {
+      gambar = await uploadFileToSupabase(req.file);
+    }
 
     const news = await prisma.news.create({
       data: { judul, isi, gambar },
@@ -70,15 +64,8 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    // 🔍 [DEBUGGING] Intip apa yang diterima backend saat update
-    console.log('\n--- 🔍 [DEBUG] UPDATE NEWS ---');
-    console.log('📦 Request Body:', req.body);
-    console.log('🖼️ Request File:', req.file);
-    console.log('------------------------------\n');
-
     const { id } = req.params;
     const { judul, isi } = req.body;
-    const gambar = req.file ? req.file.filename : undefined;
 
     const existingNews = await prisma.news.findUnique({
       where: { id: Number(id) },
@@ -91,9 +78,13 @@ exports.update = async (req, res) => {
     const data = {};
     if (judul !== undefined) data.judul = judul;
     if (isi !== undefined) data.isi = isi;
-    if (gambar) data.gambar = gambar; 
-
-    console.log('💾 Data yang akan di-UPDATE ke DB:', data);
+    
+    if (req.file) {
+      data.gambar = await uploadFileToSupabase(req.file);
+      if (existingNews.gambar) {
+        await deleteFileFromSupabase(existingNews.gambar);
+      }
+    }
 
     const news = await prisma.news.update({
       where: { id: Number(id) },
@@ -124,6 +115,11 @@ exports.remove = async (req, res) => {
     }
 
     await prisma.news.delete({ where: { id: Number(id) } });
+    
+    if (existingNews.gambar) {
+      await deleteFileFromSupabase(existingNews.gambar);
+    }
+
     res.json({ message: 'Berita berhasil dihapus' });
   } catch (error) {
     console.error('Error deleting news:', error);

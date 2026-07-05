@@ -1,7 +1,8 @@
 import axios from 'axios'
 
 const base = import.meta.env.VITE_API_URL || 'https://pkn-rs-sragen-backend.vercel.app/api'
-export const IMAGE_URL = base.replace('/api', '/uploads/');
+// Mengarahkan gambar langsung ke Supabase Storage Public URL
+export const IMAGE_URL = 'https://qaqhqyzwwumlvkpvbjfy.supabase.co/storage/v1/object/public/uploads/';
 
 const api = axios.create({
   baseURL: base,

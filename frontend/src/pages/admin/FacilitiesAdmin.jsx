@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import api from '../../services/api';
+import api, { IMAGE_URL } from '../../services/api';
 
 const BACKEND_URL = 'http://localhost:5000';
 
@@ -102,8 +102,7 @@ export default function FacilitiesAdmin() {
 
   // ✅ Fungsi helper untuk URL gambar dari database (selalu string)
   const getImageUrl = (filename) => {
-    if (!filename || typeof filename !== 'string') return null;
-    return `${BACKEND_URL}/uploads/${filename}`;
+    return `${IMAGE_URL}${filename}`;
   };
 
   // ✅ Fungsi SMART untuk preview gambar di form (menangani File object & String)

@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { uploadFileToSupabase, deleteFileFromSupabase } = require('../config/supabase');
 
 const formatTime = (value) => {
   if (!value) return '-';
@@ -111,7 +112,10 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif } = req.body;
-    const foto = req.file ? req.file.filename : null;
+    let foto = null;
+    if (req.file) {
+      foto = await uploadFileToSupabase(req.file);
+    }
 
     const specialtyId = await getSpecialtyId(spesialis);
     const subspecialtyId = await getSubspecialtyId(subspesialis);
@@ -146,13 +150,22 @@ exports.update = async (req, res) => {
   try {
     const { id } = req.params;
     const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif } = req.body;
-    const foto = req.file ? req.file.filename : undefined;
-
+    
+    const existingDoctor = await prisma.dokter.findUnique({
+      where: { id_dokter: Number(id) }
+    });
+    
     const data = {};
     
     if (nama || nama_lengkap) data.nama_lengkap = nama || nama_lengkap;
     if (deskripsi !== undefined) data.deskripsi = deskripsi;
-    if (foto) data.foto_url = foto;
+    
+    if (req.file) {
+      data.foto_url = await uploadFileToSupabase(req.file);
+      if (existingDoctor && existingDoctor.foto_url) {
+        await deleteFileFromSupabase(existingDoctor.foto_url);
+      }
+    }
     
     if (spesialis !== undefined) {
       data.id_spesialis = await getSpecialtyId(spesialis);
@@ -237,12 +250,25 @@ exports.remove = async (req, res) => {
   try {
     const { id } = req.params;
     
+    const existingDoctor = await prisma.dokter.findUnique({
+      where: { id_dokter: Number(id) }
+    });
+
+    if (!existingDoctor) {
+      return res.status(404).json({ message: 'Dokter tidak ditemukan' });
+    }
+
     // Hapus semua jadwal praktek milik dokter ini terlebih dahulu
     await prisma.jadwal_praktek.deleteMany({
       where: { id_dokter: Number(id) }
     });
 
     await prisma.dokter.delete({ where: { id_dokter: Number(id) } });
+
+    if (existingDoctor.foto_url) {
+      await deleteFileFromSupabase(existingDoctor.foto_url);
+    }
+
     res.json({ message: 'Dokter berhasil dihapus' });
   } catch (error) {
     console.error('Error deleting doctor:', error);

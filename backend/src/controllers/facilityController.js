@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { uploadFileToSupabase, deleteFileFromSupabase } = require('../config/supabase');
 
 const normalizeFacility = (facility) => ({
   id: facility.id_kamar ?? facility.id,
@@ -55,7 +56,10 @@ exports.create = async (req, res) => {
     const { nama, nama_kamar, deskripsi, fasilitas, harga_mulai, jumlah_tersedia, status_aktif } = req.body;
     
     // ✅ Ambil filename dari upload jika ada
-    const gambar = req.file ? req.file.filename : null;
+    let gambar = null;
+    if (req.file) {
+      gambar = await uploadFileToSupabase(req.file);
+    }
     
     console.log('🖼️ Gambar yang akan disimpan:', gambar);
 
@@ -94,15 +98,24 @@ exports.update = async (req, res) => {
     const { id } = req.params;
     const { nama, nama_kamar, deskripsi, fasilitas, harga_mulai, jumlah_tersedia, status_aktif } = req.body;
     
-    // ✅ Ambil filename dari upload jika ada
-    const gambar = req.file ? req.file.filename : undefined;
-    
-    console.log('🖼️ Gambar yang akan diupdate:', gambar);
+    const oldFacility = await prisma.tipe_kamar.findUnique({
+      where: { id_kamar: Number(id) }
+    });
+
+    if (!oldFacility) {
+      return res.status(404).json({ message: 'Fasilitas tidak ditemukan' });
+    }
 
     const data = {};
     if (nama || nama_kamar) data.nama_kamar = nama || nama_kamar;
     if (deskripsi !== undefined || fasilitas !== undefined) data.fasilitas = deskripsi ?? fasilitas;
-    if (gambar) data.gambar_url = gambar; // ✅ Akan update jika ada file baru
+    
+    if (req.file) {
+      data.gambar_url = await uploadFileToSupabase(req.file);
+      if (oldFacility.gambar_url) {
+        await deleteFileFromSupabase(oldFacility.gambar_url);
+      }
+    }
     if (harga_mulai !== undefined) data.harga_mulai = parseNumberOrNull(harga_mulai);
     if (jumlah_tersedia !== undefined) data.jumlah_tersedia = parseNumberOrNull(jumlah_tersedia) ?? 0;
     if (status_aktif !== undefined) data.status_aktif = parseBoolean(status_aktif, true);
@@ -131,7 +144,21 @@ exports.update = async (req, res) => {
 exports.remove = async (req, res) => {
   try {
     const { id } = req.params;
+    
+    const existingFacility = await prisma.tipe_kamar.findUnique({
+      where: { id_kamar: Number(id) }
+    });
+
+    if (!existingFacility) {
+      return res.status(404).json({ message: 'Fasilitas tidak ditemukan' });
+    }
+
     await prisma.tipe_kamar.delete({ where: { id_kamar: Number(id) } });
+
+    if (existingFacility.gambar_url) {
+      await deleteFileFromSupabase(existingFacility.gambar_url);
+    }
+
     res.json({ message: 'Fasilitas berhasil dihapus' });
   } catch (error) {
     console.error('❌ Error deleting facility:', error);
