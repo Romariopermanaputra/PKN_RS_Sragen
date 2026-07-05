@@ -50,6 +50,10 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Terjadi kesalahan server' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server berjalan di port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server berjalan di port ${PORT}`);
+  });
+}
+
+module.exports = app;
