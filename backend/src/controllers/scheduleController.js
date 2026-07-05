@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 const formatTime = (value) => {
   if (!value) return '';
-  if (value instanceof Date) return value.toTimeString().slice(0, 5);
+  if (value instanceof Date) return value.toISOString().slice(11, 16);
   if (typeof value === 'string') {
     return value.includes(':') ? value.slice(0, 5) : value;
   }

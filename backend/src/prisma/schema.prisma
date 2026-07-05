@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Achievement {
@@ -27,12 +28,12 @@ model dokter {
   id_spesialis    Int?
   id_subspesialis Int?
   status_aktif    Boolean?         @default(true)
-  spesialis       spesialis?       @relation(fields: [id_spesialis], references: [id_spesialis], onDelete: Restrict, onUpdate: Restrict, map: "dokter_ibfk_1")
-  subspesialis    subspesialis?    @relation(fields: [id_subspesialis], references: [id_subspesialis], onDelete: Restrict, onUpdate: Restrict, map: "dokter_ibfk_2")
+  spesialis       spesialis?       @relation(fields: [id_spesialis], references: [id_spesialis], onDelete: Restrict, onUpdate: Restrict)
+  subspesialis    subspesialis?    @relation(fields: [id_subspesialis], references: [id_subspesialis], onDelete: Restrict, onUpdate: Restrict)
   jadwal_praktek  jadwal_praktek[]
 
-  @@index([id_spesialis], map: "id_spesialis")
-  @@index([id_subspesialis], map: "id_subspesialis")
+  @@index([id_spesialis])
+  @@index([id_subspesialis])
 }
 
 model jadwal_praktek {
@@ -42,15 +43,15 @@ model jadwal_praktek {
   jam_mulai   DateTime?            @db.Time(0)
   jam_selesai DateTime?            @db.Time(0)
   nama_poli   String?              @db.VarChar(100)
-  dokter      dokter?              @relation(fields: [id_dokter], references: [id_dokter], onDelete: Restrict, onUpdate: Restrict, map: "jadwal_praktek_ibfk_1")
+  dokter      dokter?              @relation(fields: [id_dokter], references: [id_dokter], onDelete: Restrict, onUpdate: Restrict)
 
-  @@index([id_dokter], map: "id_dokter")
+  @@index([id_dokter])
 }
 
 model kategori_layanan {
   id_kategori   Int       @id @default(autoincrement())
   nama_kategori String    @db.VarChar(100)
-  slug          String?   @unique(map: "slug") @db.VarChar(100)
+  slug          String?   @unique @db.VarChar(100)
   icon_url      String?   @db.VarChar(255)
   urutan        Int?      @default(0)
   status_aktif  Boolean?  @default(true)
@@ -61,7 +62,7 @@ model layanan {
   id_layanan        Int               @id @default(autoincrement())
   id_kategori       Int?
   nama_layanan      String            @db.VarChar(150)
-  slug              String?           @unique(map: "slug") @db.VarChar(150)
+  slug              String?           @unique @db.VarChar(150)
   icon_url          String?           @db.VarChar(255)
   gambar_banner     String?           @db.VarChar(255)
   deskripsi_singkat String?           @db.VarChar(255)
@@ -69,22 +70,22 @@ model layanan {
   kontak_darurat    String?           @db.VarChar(50)
   urutan            Int?              @default(0)
   status_aktif      Boolean?          @default(true)
-  kategori_layanan  kategori_layanan? @relation(fields: [id_kategori], references: [id_kategori], onDelete: Restrict, onUpdate: Restrict, map: "layanan_ibfk_1")
+  kategori_layanan  kategori_layanan? @relation(fields: [id_kategori], references: [id_kategori], onDelete: Restrict, onUpdate: Restrict)
 
-  @@index([id_kategori], map: "id_kategori")
+  @@index([id_kategori])
 }
 
 model spesialis {
   id_spesialis   Int      @id @default(autoincrement())
   nama_spesialis String   @db.VarChar(100)
-  slug           String?  @unique(map: "slug") @db.VarChar(100)
+  slug           String?  @unique @db.VarChar(100)
   dokter         dokter[]
 }
 
 model subspesialis {
   id_subspesialis   Int      @id @default(autoincrement())
   nama_subspesialis String   @db.VarChar(100)
-  slug              String?  @unique(map: "slug") @db.VarChar(100)
+  slug              String?  @unique @db.VarChar(100)
   dokter            dokter[]
 }
 
@@ -125,9 +126,26 @@ model promotion {
 
 model admins {
   id         Int      @id @default(autoincrement())
-  username   String   @unique(map: "username") @db.VarChar(255)
+  username   String   @unique @db.VarChar(255)
   password   String   @db.VarChar(255)
   created_at DateTime @default(now()) @db.Timestamp(0)
+}
+
+model contact {
+  id        Int     @id @default(autoincrement())
+  telepon   String? @db.VarChar(50)
+  email     String? @db.VarChar(255)
+  alamat    String? @db.Text
+  maps_link String? @db.Text
+
+  @@map("contacts")
+}
+
+model setting {
+  id           Int     @id @default(autoincrement())
+  linktree_url String? @db.VarChar(500)
+
+  @@map("settings")
 }
 
 enum jadwal_praktek_hari {

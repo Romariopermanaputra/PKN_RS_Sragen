@@ -122,7 +122,7 @@ export default function Home() {
               <p>Lihat jadwal praktek dan poliklinik tersedia</p>
             </div>
           </Link>
-          <a href={linktree || 'https://wa.me/62123456789'} target="_blank" rel="noreferrer" className="quick-link-card" id="quick-link-whatsapp">
+          <a href={linktree || 'https://wa.me/6287878091132'} target="_blank" rel="noreferrer" className="quick-link-card" id="quick-link-whatsapp">
             <div className="quick-link-icon" style={{ background: '#E8F5E9', color: '#25D366' }}>
               <IoLogoWhatsapp />
             </div>
@@ -383,7 +383,7 @@ export default function Home() {
               <Link to="/schedule" className="btn btn-outline btn-lg">
                 <IoCalendarOutline /> Jadwal Dokter
               </Link>
-              <a href={linktree || 'https://wa.me/62123456789'} target="_blank" rel="noreferrer" className="btn btn-outline btn-lg">
+              <a href={linktree || 'https://wa.me/6287878091132'} target="_blank" rel="noreferrer" className="btn btn-outline btn-lg">
                 <IoLogoWhatsapp /> WhatsApp
               </a>
             </div>

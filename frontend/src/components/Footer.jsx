@@ -46,21 +46,21 @@ export default function Footer() {
         {/* Contact */}
         <div>
           <h4>Kontak</h4>
-          <div className="footer-contact-item">
+          <a href="https://maps.app.goo.gl/sy7FMsGSJTnPt7jv6?g_st=ac" target="_blank" rel="noreferrer" className="footer-contact-item" style={{ textDecoration: 'none', color: 'inherit' }}>
             <IoLocationOutline size={16} />
-            <span>Jl. Raya Sukowati No. 534, Sragen, Jawa Tengah</span>
+            <span>Jl. Raya Sragen - Solo No.Km. 8, Kebayanan 1, Masaran, Kec. Masaran, Kabupaten Sragen, Jawa Tengah</span>
+          </a>
+          <div className="footer-contact-item">
+            <IoCallOutline size={16} />
+            <span>Pendaftaran: 087878091132</span>
           </div>
           <div className="footer-contact-item">
             <IoCallOutline size={16} />
-            <span>(0271) 123-4567</span>
-          </div>
-          <div className="footer-contact-item">
-            <IoMailOutline size={16} />
-            <span>info@rsupkusragen.id</span>
+            <span>Humas: +62 813-2675-7487</span>
           </div>
           <div className="footer-contact-item">
             <IoTimeOutline size={16} />
-            <span>UGD: 24 Jam</span>
+            <span>Senin - Jumat: 09:00 - 18:00<br/>Sabtu: 09:00 - 14:00</span>
           </div>
         </div>
       </div>

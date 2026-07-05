@@ -93,10 +93,10 @@ export default function ServiceDetail() {
                 <h4 style={{ color: 'var(--primary)', marginBottom: '12px', fontSize: '1.2rem' }}>Informasi Pendaftaran</h4>
                 <p style={{ margin: 0, color: 'var(--text)', lineHeight: '1.6' }}>
                   Untuk pendaftaran dan informasi lebih lanjut mengenai layanan <strong>{service.title}</strong>, silakan hubungi 
-                  Call Center kami di <strong>(0271) 123-4567</strong> atau klik tombol di bawah ini.
+                  Pendaftaran kami di <strong>087878091132</strong> atau klik tombol di bawah ini.
                 </p>
                 <div style={{ marginTop: '20px' }}>
-                  <a href="https://wa.me/62123456789" target="_blank" rel="noreferrer" className="btn btn-primary">
+                  <a href="https://wa.me/6287878091132" target="_blank" rel="noreferrer" className="btn btn-primary">
                     Hubungi Kami via WhatsApp
                   </a>
                 </div>

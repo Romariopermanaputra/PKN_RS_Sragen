@@ -46,14 +46,18 @@ export default function Navbar() {
             </div>
             <div className="top-bar-item">
               <IoCallOutline size={14} />
-              <span>Call Center: (0271) 123-4567</span>
+              <span>Pendaftaran: 087878091132</span>
+            </div>
+            <div className="top-bar-item">
+              <IoCallOutline size={14} />
+              <span>Humas: +62 813-2675-7487</span>
             </div>
           </div>
           <div className="top-bar-right">
-            <div className="top-bar-item">
+            <a href="https://maps.app.goo.gl/sy7FMsGSJTnPt7jv6?g_st=ac" target="_blank" rel="noreferrer" className="top-bar-item" style={{ textDecoration: 'none', color: 'inherit' }}>
               <IoLocationOutline size={14} />
-              <span>Jl. Raya Sukowati No. 534, Sragen</span>
-            </div>
+              <span>Jl. Raya Sragen - Solo No.Km 8, Kebayanan 1, Kec.Masaran, Kab.Sragen</span>
+            </a>
           </div>
         </div>
       </div>
@@ -90,7 +94,7 @@ export default function Navbar() {
             <NavLink to="/news" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Berita</NavLink>
             <NavLink to="/promotions" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Promo</NavLink>
             <NavLink to="/contact" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Kontak</NavLink>
-            <a className="nav-cta" href={linktree || "/contact"} target={linktree ? "_blank" : "_self"} rel="noreferrer" onClick={closeMobileMenu}>Booking Online</a>
+            <a className="nav-cta" href="https://wa.me/6287878091132" target="_blank" rel="noreferrer" onClick={closeMobileMenu}>Booking Online</a>
           </nav>
 
           {/* Mobile overlay */}

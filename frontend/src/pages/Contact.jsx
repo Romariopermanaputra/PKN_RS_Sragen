@@ -33,7 +33,7 @@ export default function Contact() {
                   <div className="contact-info-icon"><IoLocationOutline /></div>
                   <div className="contact-info-text">
                     <h4>Alamat</h4>
-                    <p>{contact?.alamat || 'Jl. Raya Sukowati No. 534, Sragen, Jawa Tengah'}</p>
+                    <p>{contact?.alamat || 'Jl. Raya Sragen - Solo No.Km. 8, Kebayanan 1, Masaran, Kec. Masaran, Kabupaten Sragen, Jawa Tengah'}</p>
                   </div>
                 </div>
 
@@ -41,15 +41,10 @@ export default function Contact() {
                   <div className="contact-info-icon"><IoCallOutline /></div>
                   <div className="contact-info-text">
                     <h4>Telepon</h4>
-                    <p>{contact?.telepon || '(0271) 123-4567'}</p>
-                  </div>
-                </div>
-
-                <div className="contact-info-item">
-                  <div className="contact-info-icon"><IoMailOutline /></div>
-                  <div className="contact-info-text">
-                    <h4>Email</h4>
-                    <p>{contact?.email || 'info@rsupkusragen.id'}</p>
+                    <p>
+                      Pendaftaran: 087878091132<br />
+                      Humas: +62 813-2675-7487
+                    </p>
                   </div>
                 </div>
 
@@ -57,7 +52,11 @@ export default function Contact() {
                   <div className="contact-info-icon"><IoTimeOutline /></div>
                   <div className="contact-info-text">
                     <h4>Jam Operasional</h4>
-                    <p>UGD: 24 Jam<br />Poliklinik: Senin - Sabtu, 07.00 - 21.00</p>
+                    <p>
+                      Senin - Jumat: 09:00 - 18:00<br />
+                      Sabtu: 09:00 - 14:00<br />
+                      Minggu: Tutup
+                    </p>
                   </div>
                 </div>
               </div>
@@ -73,7 +72,7 @@ export default function Contact() {
                   />
                 ) : (
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.5!2d111.02!3d-7.43!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwMjUnNDguMCJTIDExMcKwMDEnMTIuMCJF!5e0!3m2!1sid!2sid!4v1"
+                    src="https://maps.google.com/maps?q=RSU%20PKU%20Muhammadiyah%20Masaran%20Sragen&t=&z=15&ie=UTF8&iwloc=&output=embed"
                     allowFullScreen=""
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
