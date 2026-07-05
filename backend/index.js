@@ -31,7 +31,8 @@ app.use(express.json());
 app.use('/uploads', (req, res, next) => {
   console.log('🖼️ Request to uploads:', req.path);
   next();
-}, express.static(uploadsPath));
+}, express.static(process.env.VERCEL || process.env.NODE_ENV === 'production' ? '/tmp' : path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api', require('./src/routes/public'));
