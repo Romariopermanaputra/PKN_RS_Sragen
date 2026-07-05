@@ -19,11 +19,9 @@ if (fs.existsSync(uploadsPath)) {
 }
 
 app.use(cors({
-  origin: [
-    'https://pkn-rs-sragen.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:3000'
-  ],
+  origin: function (origin, callback) {
+    callback(null, true);
+  },
   credentials: true
 }));
 
