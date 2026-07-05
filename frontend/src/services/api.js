@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+const base = import.meta.env.VITE_API_URL || 'https://pkn-rs-sragen-backend.vercel.app/api'
 export const IMAGE_URL = base.replace('/api', '/uploads/');
 
 const api = axios.create({
