@@ -3,10 +3,14 @@ const path = require('path');
 const fs = require('fs'); // ✅ Tambahkan ini
 
 // ✅ Auto-create folder uploads jika belum ada
-const uploadDir = process.env.VERCEL || process.env.NODE_ENV === 'production' ? '/tmp' : 'uploads';
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-  console.log('📁 Folder uploads dibuat otomatis di ' + uploadDir);
+const uploadDir = path.join(__dirname, '../../uploads');
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+    console.log('📁 Folder uploads dibuat otomatis di ' + uploadDir);
+  }
+} catch (err) {
+  console.warn('⚠️ Gagal membuat folder uploads (Mungkin read-only system seperti Vercel). Mengabaikan...');
 }
 
 const storage = multer.diskStorage({
