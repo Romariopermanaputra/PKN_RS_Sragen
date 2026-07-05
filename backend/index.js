@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ✅ DEBUG: Cek folder uploads saat startup
-const uploadsPath = path.join(__dirname, 'uploads');
+const uploadsPath = process.env.VERCEL || process.env.NODE_ENV === 'production' ? '/tmp' : path.join(__dirname, 'uploads');
 console.log('📁 Uploads path:', uploadsPath);
 console.log('📁 Folder exists:', fs.existsSync(uploadsPath));
 if (fs.existsSync(uploadsPath)) {
@@ -31,7 +31,7 @@ app.use(express.json());
 app.use('/uploads', (req, res, next) => {
   console.log('🖼️ Request to uploads:', req.path);
   next();
-}, express.static(path.join(__dirname, 'uploads')));
+}, express.static(uploadsPath));
 
 // Routes
 app.use('/api', require('./src/routes/public'));
