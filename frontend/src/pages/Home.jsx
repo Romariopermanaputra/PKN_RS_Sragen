@@ -107,30 +107,32 @@ export default function Home() {
 
       {/* ===== QUICK LINKS ===== */}
       <section className="quick-links">
-        <div className="quick-links-grid">
-          <Link to="/doctors" className="quick-link-card" id="quick-link-doctors">
-            <div className="quick-link-icon"><IoSearchOutline /></div>
-            <div className="quick-link-content">
-              <h3>Cari Dokter</h3>
-              <p>Temukan dokter spesialis sesuai kebutuhan Anda</p>
-            </div>
-          </Link>
-          <Link to="/schedule" className="quick-link-card" id="quick-link-schedule">
-            <div className="quick-link-icon"><IoCalendarOutline /></div>
-            <div className="quick-link-content">
-              <h3>Jadwal Dokter</h3>
-              <p>Lihat jadwal praktek dan poliklinik tersedia</p>
-            </div>
-          </Link>
-          <a href={linktree || 'https://wa.me/6287878091132'} target="_blank" rel="noreferrer" className="quick-link-card" id="quick-link-whatsapp">
-            <div className="quick-link-icon" style={{ background: '#E8F5E9', color: '#25D366' }}>
-              <IoLogoWhatsapp />
-            </div>
-            <div className="quick-link-content">
-              <h3>WhatsApp</h3>
-              <p>Hubungi kami langsung via WhatsApp</p>
-            </div>
-          </a>
+        <div className="container">
+          <div className="quick-links-grid">
+            <Link to="/doctors" className="quick-link-card" id="quick-link-doctors">
+              <div className="quick-link-icon"><IoSearchOutline /></div>
+              <div className="quick-link-content">
+                <h3>Cari Dokter</h3>
+                <p>Temukan dokter spesialis sesuai kebutuhan Anda</p>
+              </div>
+            </Link>
+            <Link to="/schedule" className="quick-link-card" id="quick-link-schedule">
+              <div className="quick-link-icon"><IoCalendarOutline /></div>
+              <div className="quick-link-content">
+                <h3>Jadwal Dokter</h3>
+                <p>Lihat jadwal praktek dan poliklinik tersedia</p>
+              </div>
+            </Link>
+            <a href={linktree || 'https://wa.me/6287878091132'} target="_blank" rel="noreferrer" className="quick-link-card" id="quick-link-whatsapp">
+              <div className="quick-link-icon" style={{ background: '#E8F5E9', color: '#25D366' }}>
+                <IoLogoWhatsapp />
+              </div>
+              <div className="quick-link-content">
+                <h3>WhatsApp</h3>
+                <p>Hubungi kami langsung via WhatsApp</p>
+              </div>
+            </a>
+          </div>
         </div>
       </section>
 
@@ -203,8 +205,8 @@ export default function Home() {
           </div>
 
           {activeTab === 'layanan' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', alignItems: 'center' }} className="layanan-unggulan-layout">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }} className="layanan-unggulan-links">
+            <div className="layanan-unggulan-layout">
+              <div className="layanan-unggulan-links">
                 <Link to="/service/minimally-invasive-surgery" className="service-pill">
                   <span>Minimally Invasive Surgery</span>
                   <div className="service-pill-icon"><IoPlayOutline /></div>
@@ -223,7 +225,7 @@ export default function Home() {
                 </Link>
               </div>
               <div className="layanan-unggulan-img">
-                <img src={heroImg3} alt="Layanan Unggulan" style={{ borderRadius: 'var(--radius-lg)', width: '100%', height: '350px', objectFit: 'cover' }} />
+                <img src={heroImg3} alt="Layanan Unggulan" className="layanan-unggulan-image" />
               </div>
             </div>
           )}

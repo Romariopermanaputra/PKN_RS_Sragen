@@ -1,6 +1,5 @@
 import { NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-// import api from '../services/api' // Bisa dikomentari jika tidak dipakai lagi di file ini
 import logoImg from '../assets/logo_rs.jpg'
 import { IoMenu, IoClose, IoCallOutline, IoLocationOutline, IoTimeOutline } from 'react-icons/io5'
 
@@ -10,23 +9,9 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    // ✅ PERBAIKAN: 
-    // Kita matikan sementara pemanggilan API ke '/settings/linktree' 
-    // karena tabel 'settings' belum ada di database Anda (penyebab error 500).
-    
-    // Silakan isi URL linktree/booking secara manual di bawah ini. 
-    // Jika belum ada, biarkan kosong ('').
-    const defaultLinktreeUrl = '' // Contoh: 'https://linktr.ee/rsu_pku_sragen'
+    const defaultLinktreeUrl = ''
     setLinktree(defaultLinktreeUrl)
 
-    // CATATAN: Jika nanti rekan tim Anda sudah menambahkan tabel 'settings' ke database, 
-    // Anda bisa menghapus baris di atas dan mengaktifkan kembali kode di bawah ini:
-    /*
-    api.get('/settings/linktree')
-      .then(res => setLinktree(res.data.linktree_url || ''))
-      .catch(() => setLinktree(''))
-    */
-    
     const handleScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
@@ -34,9 +19,24 @@ export default function Navbar() {
 
   const closeMobileMenu = () => setMobileMenuOpen(false)
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) closeMobileMenu()
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [mobileMenuOpen])
+
   return (
     <>
-      {/* Top Bar */}
+      {/* Top Bar - TAMPILAN LENGKAP (Desktop & Mobile sama) */}
       <div className="top-bar">
         <div className="container">
           <div className="top-bar-left">
@@ -54,7 +54,13 @@ export default function Navbar() {
             </div>
           </div>
           <div className="top-bar-right">
-            <a href="https://maps.app.goo.gl/sy7FMsGSJTnPt7jv6?g_st=ac" target="_blank" rel="noreferrer" className="top-bar-item" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <a
+              href="https://maps.app.goo.gl/sy7FMsGSJTnPt7jv6?g_st=ac"
+              target="_blank"
+              rel="noreferrer"
+              className="top-bar-item"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
               <IoLocationOutline size={14} />
               <span>Jl. Raya Sragen - Solo No.Km 8, Kebayanan 1, Kec.Masaran, Kab.Sragen</span>
             </a>
@@ -94,10 +100,17 @@ export default function Navbar() {
             <NavLink to="/news" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Berita</NavLink>
             <NavLink to="/promotions" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Promo</NavLink>
             <NavLink to="/contact" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Kontak</NavLink>
-            <a className="nav-cta" href="https://wa.me/6287878091132" target="_blank" rel="noreferrer" onClick={closeMobileMenu}>Booking Online</a>
+            <a
+              className="nav-cta"
+              href={linktree || 'https://wa.me/6287878091132'}
+              target="_blank"
+              rel="noreferrer"
+              onClick={closeMobileMenu}
+            >
+              Booking Online
+            </a>
           </nav>
 
-          {/* Mobile overlay */}
           <div className={`mobile-overlay ${mobileMenuOpen ? 'active' : ''}`} onClick={closeMobileMenu} />
         </div>
       </header>
