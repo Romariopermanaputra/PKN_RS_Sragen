@@ -56,6 +56,11 @@ export default function Home() {
   const [selectedFacility, setSelectedFacility] = useState(null)
   const [brokenImages, setBrokenImages] = useState({})
 
+  // Swipe logic
+  const [touchStart, setTouchStart] = useState(null)
+  const [touchEnd, setTouchEnd] = useState(null)
+  const minSwipeDistance = 50
+
   useEffect(() => {
     getNews().then(setNews).catch(() => {})
     getPromotions().then(setPromos).catch(() => {})
@@ -77,6 +82,18 @@ export default function Home() {
     const timer = setInterval(nextSlide, 5000)
     return () => clearInterval(timer)
   }, [nextSlide])
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null)
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+  const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX)
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    const distance = touchStart - touchEnd
+    if (distance > minSwipeDistance) nextSlide()
+    if (distance < -minSwipeDistance) prevSlide()
+  }
 
   // Tutup modal saat tekan ESC & kunci scroll body
   useEffect(() => {
@@ -127,7 +144,13 @@ export default function Home() {
   return (
     <div>
       {/* ===== HERO CAROUSEL ===== */}
-      <section className="hero-carousel" id="hero-carousel">
+      <section 
+        className="hero-carousel" 
+        id="hero-carousel"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         {heroSlides.map((slide, idx) => (
           <div key={idx} className={`hero-slide ${idx === currentSlide ? 'active' : ''}`}>
             <img src={slide.image} alt={slide.title} />
@@ -153,11 +176,6 @@ export default function Home() {
         <button className="hero-arrow next" onClick={nextSlide} aria-label="Next slide">
           <IoChevronForwardOutline />
         </button>
-        <div className="hero-dots">
-          {heroSlides.map((_, idx) => (
-            <button key={idx} className={`hero-dot ${idx === currentSlide ? 'active' : ''}`} onClick={() => setCurrentSlide(idx)} aria-label={`Slide ${idx + 1}`} />
-          ))}
-        </div>
       </section>
 
       {/* ===== QUICK LINKS ===== */}
