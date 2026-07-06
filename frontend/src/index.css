@@ -339,11 +339,8 @@ p { margin-bottom: 1rem; line-height: 1.75; }
 }
 
 .hero-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.4);
-  border: 2px solid rgba(255,255,255,0.6);
+  background: transparent;
+  border: none;
   cursor: pointer;
   transition: all var(--transition);
   min-width: 44px;
@@ -351,6 +348,7 @@ p { margin-bottom: 1rem; line-height: 1.75; }
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
 }
 
 .hero-dot::before {
@@ -2359,6 +2357,19 @@ p { margin-bottom: 1rem; line-height: 1.75; }
   
   /* Quick Links */
   .quick-links { margin-top: -20px; }
+  
+  /* Top Bar */
+  .top-bar-right { display: none; }
+  .top-bar .container { justify-content: center; }
+  .top-bar-left { justify-content: center; flex-wrap: wrap; gap: 8px 16px; }
+
+  /* Hero Section Mobile */
+  .hero-arrow { display: none; }
+  .hero-overlay { padding: 0 20px; text-align: center; justify-content: center; }
+  .hero-text { margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; }
+  .hero-actions { justify-content: center; gap: 10px; }
+  .hero-actions .btn { width: 100%; }
+  .hero-dots { bottom: 16px; }
   
   /* Sections */
   .section { padding: 40px 16px; }
