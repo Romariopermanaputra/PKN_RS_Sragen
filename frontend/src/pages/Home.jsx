@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router-dom'
 import api, { getNews, getPromotions, getFacilities, getAchievements, IMAGE_URL } from '../services/api'
 import heroImg1 from '../assets/hero1.png'
@@ -444,7 +445,7 @@ export default function Home() {
       </section>
 
       {/* Modal Detail Berita */}
-      {selectedNews && (
+      {selectedNews && createPortal(
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal news-modal" onClick={e => e.stopPropagation()}>
             <button className="modal-close-btn" onClick={closeModal}>
@@ -487,7 +488,8 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

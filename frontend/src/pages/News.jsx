@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useLocation } from 'react-router-dom'
 import { getNews, IMAGE_URL } from '../services/api'
 import { IoNewspaperOutline, IoAlertCircleOutline, IoClose, IoCalendarOutline } from 'react-icons/io5'
@@ -133,7 +134,7 @@ export default function News() {
       </div>
 
       {/* Modal Detail Berita */}
-      {selectedNews && (
+      {selectedNews && createPortal(
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal news-modal" onClick={e => e.stopPropagation()}>
             <button className="modal-close-btn" onClick={closeModal}>
@@ -176,7 +177,8 @@ export default function News() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
