@@ -19,6 +19,7 @@ export default function Navbar() {
 
   const closeMobileMenu = () => setMobileMenuOpen(false)
 
+  // Tutup menu mobile saat resize ke desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768) closeMobileMenu()
@@ -27,6 +28,7 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  // Kunci scroll body saat menu mobile terbuka
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''
     return () => {
@@ -36,7 +38,7 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Top Bar - TAMPILAN LENGKAP (Desktop & Mobile sama) */}
+      {/* Top Bar - Semua info tampil lengkap di desktop & mobile */}
       <div className="top-bar">
         <div className="container">
           <div className="top-bar-left">
@@ -79,6 +81,7 @@ export default function Navbar() {
             </div>
           </NavLink>
 
+          {/* Tombol Hamburger - Hanya muncul di mobile */}
           <button
             className="mobile-menu-btn"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -87,12 +90,15 @@ export default function Navbar() {
             {mobileMenuOpen ? <IoClose /> : <IoMenu />}
           </button>
 
+          {/* Menu Navigation - Hidden di mobile, tampil di desktop */}
           <nav className={`nav-links ${mobileMenuOpen ? 'open' : ''}`}>
+            {/* Tombol close di dalam menu mobile */}
             {mobileMenuOpen && (
               <button className="mobile-close-btn" onClick={closeMobileMenu}>
                 <IoClose />
               </button>
             )}
+            
             <NavLink to="/" end className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Beranda</NavLink>
             <NavLink to="/doctors" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Dokter</NavLink>
             <NavLink to="/schedule" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Jadwal</NavLink>
@@ -100,6 +106,7 @@ export default function Navbar() {
             <NavLink to="/news" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Berita</NavLink>
             <NavLink to="/promotions" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Promo</NavLink>
             <NavLink to="/contact" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Kontak</NavLink>
+            
             <a
               className="nav-cta"
               href={linktree || 'https://wa.me/6287878091132'}
@@ -111,6 +118,7 @@ export default function Navbar() {
             </a>
           </nav>
 
+          {/* Overlay gelap saat menu mobile terbuka */}
           <div className={`mobile-overlay ${mobileMenuOpen ? 'active' : ''}`} onClick={closeMobileMenu} />
         </div>
       </header>
