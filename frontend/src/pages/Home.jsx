@@ -15,6 +15,7 @@ import {
   IoPeopleOutline,
   IoBusinessOutline,
   IoChevronBackOutline,
+  IoChevronForwardOutline,
   IoArrowForwardOutline,
   IoTrophyOutline,
   IoPlayOutline,
