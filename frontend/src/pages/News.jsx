@@ -32,8 +32,6 @@ export default function News() {
     if (selectedNews) {
       window.addEventListener('keydown', handleEsc)
       document.body.style.overflow = 'hidden'
-      // Scroll to top when modal opens so it's not cut off on desktop
-      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
     return () => {
       window.removeEventListener('keydown', handleEsc)

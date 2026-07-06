@@ -18,6 +18,8 @@ import {
   IoArrowForwardOutline,
   IoTrophyOutline,
   IoPlayOutline,
+  IoNewspaperOutline,
+  IoClose,
 } from 'react-icons/io5'
 
 const heroSlides = [
@@ -47,6 +49,8 @@ export default function Home() {
   const [linktree, setLinktree] = useState('')
   const [currentSlide, setCurrentSlide] = useState(0)
   const [activeTab, setActiveTab] = useState('layanan')
+  const [selectedNews, setSelectedNews] = useState(null)
+  const [brokenImages, setBrokenImages] = useState({})
 
   useEffect(() => {
     getNews().then(setNews).catch(() => {})
@@ -69,6 +73,46 @@ export default function Home() {
     const timer = setInterval(nextSlide, 5000)
     return () => clearInterval(timer)
   }, [nextSlide])
+
+  // Tutup modal saat tekan ESC & kunci scroll body
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setSelectedNews(null)
+    }
+    if (selectedNews) {
+      window.addEventListener('keydown', handleEsc)
+      document.body.style.overflow = 'hidden'
+    }
+    return () => {
+      window.removeEventListener('keydown', handleEsc)
+      document.body.style.overflow = ''
+    }
+  }, [selectedNews])
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Tanggal tidak tersedia'
+    try {
+      return new Date(dateString).toLocaleDateString('id-ID', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+      })
+    } catch {
+      return 'Tanggal tidak valid'
+    }
+  }
+
+  const handleImageError = (newsId) => {
+    setBrokenImages(prev => ({ ...prev, [newsId]: true }))
+  }
+
+  const openModal = (newsItem) => {
+    setSelectedNews(newsItem)
+  }
+
+  const closeModal = () => {
+    setSelectedNews(null)
+  }
 
   return (
     <div>
@@ -285,7 +329,7 @@ export default function Home() {
                 key={n.id} 
                 className="card" 
                 style={{ cursor: 'pointer' }}
-                onClick={() => navigate('/news', { state: { selectedNews: n } })}
+                onClick={() => openModal(n)}
               >
                 {n.gambar ? (
                   <img src={`${IMAGE_URL}${n.gambar}`} alt={n.judul} className="card-img" />
@@ -398,6 +442,53 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Modal Detail Berita */}
+      {selectedNews && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal news-modal" onClick={e => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={closeModal}>
+              <IoClose />
+            </button>
+            
+            <div className="modal-image-container">
+              {selectedNews.gambar && !brokenImages[selectedNews.id] ? (
+                <img 
+                  src={`${IMAGE_URL}${selectedNews.gambar}`} 
+                  alt={selectedNews.judul} 
+                  className="modal-image"
+                  onError={() => handleImageError(selectedNews.id)}
+                />
+              ) : (
+                <div className="modal-image-placeholder">
+                  <IoNewspaperOutline size={64} />
+                </div>
+              )}
+            </div>
+            
+            <div className="modal-content">
+              <span className="modal-tag">Berita Terbaru</span>
+              <h2 className="modal-title">{selectedNews.judul}</h2>
+              
+              <div className="modal-date">
+                <IoCalendarOutline />
+                <span>Diterbitkan pada {formatDate(selectedNews.tanggal)}</span>
+              </div>
+              
+              <div className="modal-description">
+                <h3>Isi Berita</h3>
+                <p style={{ whiteSpace: 'pre-line' }}>{selectedNews.isi}</p>
+              </div>
+              
+              <div className="modal-actions">
+                <button onClick={closeModal} className="btn btn-primary btn-lg">
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
