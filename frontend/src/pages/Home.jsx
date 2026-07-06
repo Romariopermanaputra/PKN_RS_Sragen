@@ -15,12 +15,12 @@ import {
   IoPeopleOutline,
   IoBusinessOutline,
   IoChevronBackOutline,
-  IoChevronForwardOutline,
   IoArrowForwardOutline,
   IoTrophyOutline,
   IoPlayOutline,
   IoNewspaperOutline,
   IoClose,
+  IoGiftOutline,
 } from 'react-icons/io5'
 
 const heroSlides = [
@@ -51,6 +51,8 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [activeTab, setActiveTab] = useState('layanan')
   const [selectedNews, setSelectedNews] = useState(null)
+  const [selectedPromo, setSelectedPromo] = useState(null)
+  const [selectedFacility, setSelectedFacility] = useState(null)
   const [brokenImages, setBrokenImages] = useState({})
 
   useEffect(() => {
@@ -78,9 +80,13 @@ export default function Home() {
   // Tutup modal saat tekan ESC & kunci scroll body
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === 'Escape') setSelectedNews(null)
+      if (e.key === 'Escape') {
+        setSelectedNews(null)
+        setSelectedPromo(null)
+        setSelectedFacility(null)
+      }
     }
-    if (selectedNews) {
+    if (selectedNews || selectedPromo || selectedFacility) {
       window.addEventListener('keydown', handleEsc)
       document.body.style.overflow = 'hidden'
     }
@@ -88,7 +94,7 @@ export default function Home() {
       window.removeEventListener('keydown', handleEsc)
       document.body.style.overflow = ''
     }
-  }, [selectedNews])
+  }, [selectedNews, selectedPromo, selectedFacility])
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Tanggal tidak tersedia'
@@ -113,6 +119,8 @@ export default function Home() {
 
   const closeModal = () => {
     setSelectedNews(null)
+    setSelectedPromo(null)
+    setSelectedFacility(null)
   }
 
   return (
@@ -279,7 +287,7 @@ export default function Home() {
           {activeTab === 'rawat-inap' && (
             <div className="cards-grid cards-grid-3">
               {facilities.length > 0 ? facilities.filter(f => f.status_aktif !== false).slice(0, 6).map(f => (
-                <div key={f.id} className="card">
+                <div key={f.id} className="card facility-card" style={{ cursor: 'pointer' }} onClick={() => setSelectedFacility(f)}>
                   {f.gambar ? (
                     <img src={`${IMAGE_URL}${f.gambar}`} alt={f.nama} className="card-img" />
                   ) : (
@@ -367,7 +375,7 @@ export default function Home() {
             </div>
             <div className="cards-grid cards-grid-3">
               {promos.slice(0, 3).map(p => (
-                <div key={p.id} className="card">
+                <div key={p.id} className="card promo-card" style={{ cursor: 'pointer' }} onClick={() => setSelectedPromo(p)}>
                   {p.gambar ? (
                     <img src={`${IMAGE_URL}${p.gambar}`} alt={p.judul} className="card-img" />
                   ) : (
@@ -482,6 +490,129 @@ export default function Home() {
               </div>
               
               <div className="modal-actions">
+                <button onClick={closeModal} className="btn btn-primary btn-lg">
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Modal Detail Promo */}
+      {selectedPromo && createPortal(
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal promo-modal" onClick={e => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={closeModal}>
+              <IoClose />
+            </button>
+            
+            <div className="modal-image-container">
+              {selectedPromo.gambar ? (
+                <img 
+                  src={`${IMAGE_URL}${selectedPromo.gambar}`} 
+                  alt={selectedPromo.judul} 
+                  className="modal-image"
+                />
+              ) : (
+                <div className="modal-image-placeholder">
+                  <IoGiftOutline size={64} />
+                </div>
+              )}
+            </div>
+            
+            <div className="modal-content">
+              <span className="modal-tag">Promo Spesial</span>
+              <h2 className="modal-title">{selectedPromo.judul}</h2>
+              
+              {selectedPromo.tanggal_berakhir && (
+                <div className="modal-date">
+                  <IoCalendarOutline />
+                  <span>Berlaku sampai {new Date(selectedPromo.tanggal_berakhir).toLocaleDateString('id-ID', { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric' 
+                  })}</span>
+                </div>
+              )}
+              
+              <div className="modal-description">
+                <h3>Deskripsi Promo</h3>
+                <p>{selectedPromo.deskripsi}</p>
+              </div>
+              
+              {selectedPromo.syarat_ketentuan && (
+                <div className="modal-terms">
+                  <h3>Syarat & Ketentuan</h3>
+                  <p>{selectedPromo.syarat_ketentuan}</p>
+                </div>
+              )}
+              
+              <div className="modal-actions">
+                <button onClick={closeModal} className="btn btn-primary btn-lg">
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Modal Detail Layanan/Fasilitas */}
+      {selectedFacility && createPortal(
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal facility-modal" onClick={e => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={closeModal}>
+              <IoClose />
+            </button>
+            
+            <div className="modal-image-container">
+              {selectedFacility.gambar ? (
+                <img 
+                  src={`${IMAGE_URL}${selectedFacility.gambar}`} 
+                  alt={selectedFacility.nama} 
+                  className="modal-image"
+                />
+              ) : (
+                <div className="modal-image-placeholder">
+                  <IoBusinessOutline size={64} />
+                </div>
+              )}
+            </div>
+            
+            <div className="modal-content">
+              <span className="modal-tag">Fasilitas & Layanan</span>
+              <h2 className="modal-title">{selectedFacility.nama}</h2>
+              
+              <div className="modal-description">
+                <h3>Deskripsi</h3>
+                <p>{selectedFacility.deskripsi || 'Tidak ada deskripsi.'}</p>
+              </div>
+              
+              {(selectedFacility.harga_mulai || selectedFacility.jumlah_tersedia !== undefined) && (
+                <div className="modal-terms" style={{ marginTop: 24, display: 'flex', gap: 24 }}>
+                  {selectedFacility.harga_mulai && (
+                    <div>
+                      <h3>Harga Mulai</h3>
+                      <p className="price-tag" style={{ fontSize: '1.2rem', margin: 0 }}>
+                        Rp {Number(selectedFacility.harga_mulai).toLocaleString('id-ID')}
+                      </p>
+                    </div>
+                  )}
+                  {selectedFacility.jumlah_tersedia !== undefined && (
+                    <div>
+                      <h3>Status</h3>
+                      <p className={Number(selectedFacility.jumlah_tersedia || 0) > 0 ? 'badge-available' : 'badge-unavailable'} style={{ fontSize: '1rem', padding: '6px 12px' }}>
+                        {Number(selectedFacility.jumlah_tersedia || 0) > 0 ? `${selectedFacility.jumlah_tersedia} tersedia` : 'Penuh'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div className="modal-actions" style={{ marginTop: 32 }}>
                 <button onClick={closeModal} className="btn btn-primary btn-lg">
                   Tutup
                 </button>

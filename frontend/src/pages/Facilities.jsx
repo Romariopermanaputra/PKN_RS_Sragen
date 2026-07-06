@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { getFacilities, IMAGE_URL } from '../services/api'
-import { IoBusinessOutline } from 'react-icons/io5'
+import { IoBusinessOutline, IoClose } from 'react-icons/io5'
 
 export default function Facilities() {
   const [fac, setFac] = useState([])
@@ -8,6 +9,7 @@ export default function Facilities() {
   const [searchText, setSearchText] = useState('')
   const [availability, setAvailability] = useState('all')
   const [sortBy, setSortBy] = useState('name')
+  const [selectedFacility, setSelectedFacility] = useState(null)
 
   useEffect(() => {
     getFacilities().then(data => {
@@ -35,6 +37,29 @@ export default function Facilities() {
       if (sortBy === 'price-high') return Number(b.harga_mulai || 0) - Number(a.harga_mulai || 0)
       return String(a.nama || '').localeCompare(String(b.nama || ''), 'id-ID')
     })
+
+  // Tutup modal saat tekan ESC
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setSelectedFacility(null)
+    }
+    if (selectedFacility) {
+      window.addEventListener('keydown', handleEsc)
+      document.body.style.overflow = 'hidden'
+    }
+    return () => {
+      window.removeEventListener('keydown', handleEsc)
+      document.body.style.overflow = ''
+    }
+  }, [selectedFacility])
+
+  const openModal = (facility) => {
+    setSelectedFacility(facility)
+  }
+
+  const closeModal = () => {
+    setSelectedFacility(null)
+  }
 
   return (
     <div>
@@ -86,7 +111,7 @@ export default function Facilities() {
           ) : filteredFacilities.length > 0 ? (
             <div className="cards-grid cards-grid-3">
               {filteredFacilities.map(f => (
-                <div key={f.id} className="card">
+                <div key={f.id} className="card facility-card" style={{ cursor: 'pointer' }} onClick={() => openModal(f)}>
                   {f.gambar ? (
                     <img src={`${IMAGE_URL}${f.gambar}`} alt={f.nama} className="card-img" />
                   ) : (
@@ -116,6 +141,69 @@ export default function Facilities() {
           )}
         </div>
       </div>
+
+      {/* Modal Detail Layanan/Fasilitas */}
+      {selectedFacility && createPortal(
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal facility-modal" onClick={e => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={closeModal}>
+              <IoClose />
+            </button>
+            
+            <div className="modal-image-container">
+              {selectedFacility.gambar ? (
+                <img 
+                  src={`${IMAGE_URL}${selectedFacility.gambar}`} 
+                  alt={selectedFacility.nama} 
+                  className="modal-image"
+                />
+              ) : (
+                <div className="modal-image-placeholder">
+                  <IoBusinessOutline size={64} />
+                </div>
+              )}
+            </div>
+            
+            <div className="modal-content">
+              <span className="modal-tag">Fasilitas & Layanan</span>
+              <h2 className="modal-title">{selectedFacility.nama}</h2>
+              
+              <div className="modal-description">
+                <h3>Deskripsi</h3>
+                <p>{selectedFacility.deskripsi || 'Tidak ada deskripsi.'}</p>
+              </div>
+              
+              {(selectedFacility.harga_mulai || selectedFacility.jumlah_tersedia !== undefined) && (
+                <div className="modal-terms" style={{ marginTop: 24, display: 'flex', gap: 24 }}>
+                  {selectedFacility.harga_mulai && (
+                    <div>
+                      <h3>Harga Mulai</h3>
+                      <p className="price-tag" style={{ fontSize: '1.2rem', margin: 0 }}>
+                        Rp {Number(selectedFacility.harga_mulai).toLocaleString('id-ID')}
+                      </p>
+                    </div>
+                  )}
+                  {selectedFacility.jumlah_tersedia !== undefined && (
+                    <div>
+                      <h3>Status</h3>
+                      <p className={Number(selectedFacility.jumlah_tersedia || 0) > 0 ? 'badge-available' : 'badge-unavailable'} style={{ fontSize: '1rem', padding: '6px 12px' }}>
+                        {Number(selectedFacility.jumlah_tersedia || 0) > 0 ? `${selectedFacility.jumlah_tersedia} tersedia` : 'Penuh'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div className="modal-actions" style={{ marginTop: 32 }}>
+                <button onClick={closeModal} className="btn btn-primary btn-lg">
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   )
 }

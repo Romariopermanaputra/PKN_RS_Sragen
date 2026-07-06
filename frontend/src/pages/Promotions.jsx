@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { getPromotions, IMAGE_URL } from '../services/api'
 import { IoGiftOutline, IoClose, IoCalendarOutline } from 'react-icons/io5'
 
@@ -92,7 +93,7 @@ export default function Promotions() {
       </div>
 
       {/* Modal Detail Promo */}
-      {selectedPromo && (
+      {selectedPromo && createPortal(
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal promo-modal" onClick={e => e.stopPropagation()}>
             <button className="modal-close-btn" onClick={closeModal}>
@@ -147,7 +148,8 @@ export default function Promotions() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
