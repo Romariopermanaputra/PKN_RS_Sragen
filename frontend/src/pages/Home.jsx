@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import api, { getNews, getPromotions, getFacilities, getAchievements, IMAGE_URL } from '../services/api'
 import heroImg1 from '../assets/hero1.png'
 import heroImg2 from '../assets/hero2.png'
@@ -39,6 +39,7 @@ const heroSlides = [
 ]
 
 export default function Home() {
+  const navigate = useNavigate()
   const [news, setNews] = useState([])
   const [promos, setPromos] = useState([])
   const [facilities, setFacilities] = useState([])
@@ -280,7 +281,12 @@ export default function Home() {
 
           <div className="cards-grid cards-grid-3">
             {news.length > 0 ? news.slice(0, 3).map(n => (
-              <article key={n.id} className="card">
+              <article 
+                key={n.id} 
+                className="card" 
+                style={{ cursor: 'pointer' }}
+                onClick={() => navigate('/news', { state: { selectedNews: n } })}
+              >
                 {n.gambar ? (
                   <img src={`${IMAGE_URL}${n.gambar}`} alt={n.judul} className="card-img" />
                 ) : (

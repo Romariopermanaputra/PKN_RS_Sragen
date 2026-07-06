@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { getNews, IMAGE_URL } from '../services/api'
 import { IoNewspaperOutline, IoAlertCircleOutline, IoClose, IoCalendarOutline } from 'react-icons/io5'
 
 export default function News() {
+  const location = useLocation()
   const [news, setNews] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [brokenImages, setBrokenImages] = useState({})
-  const [selectedNews, setSelectedNews] = useState(null)
+  const [selectedNews, setSelectedNews] = useState(location.state?.selectedNews || null)
 
   useEffect(() => {
     getNews()
@@ -30,6 +32,8 @@ export default function News() {
     if (selectedNews) {
       window.addEventListener('keydown', handleEsc)
       document.body.style.overflow = 'hidden'
+      // Scroll to top when modal opens so it's not cut off on desktop
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
     return () => {
       window.removeEventListener('keydown', handleEsc)
