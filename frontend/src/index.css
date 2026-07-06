@@ -969,22 +969,30 @@ p { margin-bottom: 1rem; line-height: 1.75; }
   transform: rotate(90deg);
 }
 
+/* ✅ UPDATE: Modal Image Container - Gambar Tampil Penuh */
 .modal-image-container {
   width: 100%;
-  height: 350px;
+  min-height: 200px;
+  max-height: 500px;
   overflow: hidden;
   background: var(--bg-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* ✅ UPDATE: Modal Image - Object-fit Contain */
 .modal-image {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  max-height: 500px;
+  object-fit: contain;
+  display: block;
 }
 
 .modal-image-placeholder {
   width: 100%;
-  height: 100%;
+  height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1065,48 +1073,6 @@ p { margin-bottom: 1rem; line-height: 1.75; }
 .modal-actions .btn {
   flex: 1;
   min-width: 140px;
-}
-
-/* Responsive Modal */
-@media (max-width: 768px) {
-  .promo-modal {
-    width: 95%;
-    max-height: 95vh;
-  }
-  
-  .modal-image-container {
-    height: 250px;
-  }
-  
-  .modal-content {
-    padding: 24px;
-  }
-  
-  .modal-title {
-    font-size: 1.4rem;
-  }
-  
-  .modal-actions {
-    flex-direction: column;
-  }
-  
-  .modal-actions .btn {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .modal-image-container {
-    height: 200px;
-  }
-  
-  .modal-content {
-    padding: 20px;
-  }
-  
-  .modal-title {
-    font-size: 1.2rem;
-  }
 }
 
 /* Line Clamp untuk card preview */
@@ -2143,6 +2109,37 @@ p { margin-bottom: 1rem; line-height: 1.75; }
   .doctor-card-content {
     padding: 20px;
   }
+  
+  /* ✅ UPDATE: Promo Modal Responsive */
+  .promo-modal {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .modal-image-container {
+    min-height: 150px;
+    max-height: 400px;
+  }
+  
+  .modal-image {
+    max-height: 400px;
+  }
+  
+  .modal-content {
+    padding: 24px;
+  }
+  
+  .modal-title {
+    font-size: 1.4rem;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+  
+  .modal-actions .btn {
+    width: 100%;
+  }
 }
 
 /* HP Kecil (≤640px) */
@@ -2219,6 +2216,24 @@ p { margin-bottom: 1rem; line-height: 1.75; }
   .top-bar-item svg {
     width: 11px;
     height: 11px;
+  }
+  
+  /* ✅ UPDATE: Promo Modal untuk HP Sangat Kecil */
+  .modal-image-container {
+    min-height: 150px;
+    max-height: 300px;
+  }
+  
+  .modal-image {
+    max-height: 300px;
+  }
+  
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .modal-title {
+    font-size: 1.2rem;
   }
 }
 
