@@ -924,8 +924,38 @@ p { margin-bottom: 1rem; line-height: 1.75; }
   transform: translateX(4px);
 }
 
-/* ===== PROMO MODAL ===== */
-.promo-modal {
+/* ===== NEWS CARD (BARU!) ===== */
+.news-card {
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.news-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+}
+
+.news-view-more {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.news-view-more .arrow {
+  transition: transform var(--transition);
+}
+
+.news-card:hover .news-view-more .arrow {
+  transform: translateX(4px);
+}
+
+/* ===== MODAL (SHARED STYLES) ===== */
+.promo-modal,
+.news-modal {
   max-width: 800px;
   width: 90%;
   max-height: 90vh;
@@ -969,7 +999,7 @@ p { margin-bottom: 1rem; line-height: 1.75; }
   transform: rotate(90deg);
 }
 
-/* ✅ UPDATE: Modal Image Container - Gambar Tampil Penuh */
+/* ✅ Modal Image Container - Gambar Tampil Penuh */
 .modal-image-container {
   width: 100%;
   min-height: 200px;
@@ -981,7 +1011,7 @@ p { margin-bottom: 1rem; line-height: 1.75; }
   justify-content: center;
 }
 
-/* ✅ UPDATE: Modal Image - Object-fit Contain */
+/* ✅ Modal Image - Object-fit Contain */
 .modal-image {
   width: 100%;
   height: auto;
@@ -1288,7 +1318,7 @@ p { margin-bottom: 1rem; line-height: 1.75; }
   margin-top: 12px;
 }
 
-/* ===== MODAL ===== */
+/* ===== MODAL OVERLAY ===== */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -2110,8 +2140,9 @@ p { margin-bottom: 1rem; line-height: 1.75; }
     padding: 20px;
   }
   
-  /* ✅ UPDATE: Promo Modal Responsive */
-  .promo-modal {
+  /* ✅ Modal Responsive (Promo & News) */
+  .promo-modal,
+  .news-modal {
     width: 95%;
     max-height: 95vh;
   }
@@ -2218,7 +2249,7 @@ p { margin-bottom: 1rem; line-height: 1.75; }
     height: 11px;
   }
   
-  /* ✅ UPDATE: Promo Modal untuk HP Sangat Kecil */
+  /* ✅ Modal untuk HP Sangat Kecil */
   .modal-image-container {
     min-height: 150px;
     max-height: 300px;

@@ -1,19 +1,17 @@
 import { useEffect, useState } from 'react'
 import { getNews, IMAGE_URL } from '../services/api'
-import { IoNewspaperOutline, IoAlertCircleOutline } from 'react-icons/io5'
+import { IoNewspaperOutline, IoAlertCircleOutline, IoClose, IoCalendarOutline } from 'react-icons/io5'
 
 export default function News() {
   const [news, setNews] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  
-  // State untuk menandai gambar yang gagal dimuat (broken images)
   const [brokenImages, setBrokenImages] = useState({})
+  const [selectedNews, setSelectedNews] = useState(null)
 
   useEffect(() => {
     getNews()
       .then(data => {
-        // Pastikan data yang diterima adalah array
         setNews(Array.isArray(data) ? data : [])
         setLoading(false)
       })
@@ -24,7 +22,22 @@ export default function News() {
       })
   }, [])
 
-  // Helper untuk format tanggal agar aman dari error jika tanggal null/invalid
+  // Tutup modal saat tekan ESC & kunci scroll body
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setSelectedNews(null)
+    }
+    if (selectedNews) {
+      window.addEventListener('keydown', handleEsc)
+      document.body.style.overflow = 'hidden'
+    }
+    return () => {
+      window.removeEventListener('keydown', handleEsc)
+      document.body.style.overflow = ''
+    }
+  }, [selectedNews])
+
+  // Helper untuk format tanggal
   const formatDate = (dateString) => {
     if (!dateString) return 'Tanggal tidak tersedia'
     try {
@@ -38,27 +51,32 @@ export default function News() {
     }
   }
 
-  // Helper untuk menangani gambar yang error (404/not found)
+  // Helper untuk menangani gambar yang error
   const handleImageError = (newsId) => {
     setBrokenImages(prev => ({ ...prev, [newsId]: true }))
   }
 
+  const openModal = (newsItem) => {
+    setSelectedNews(newsItem)
+  }
+
+  const closeModal = () => {
+    setSelectedNews(null)
+  }
+
   return (
     <div>
-      {/* Page Banner - Disesuaikan dengan style Doctors.jsx */}
-      <div className="page-banner" style={{ padding: '80px 24px', textAlign: 'center', background: 'linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%)' }}>
-        <h1 style={{ color: 'white', fontSize: '2.5rem', marginBottom: '16px' }}>Berita Terkini</h1>
-        <p style={{ color: 'white', opacity: 0.9, fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
-          Informasi terbaru seputar kegiatan dan layanan RSU PKU Muhammadiyah Sragen
-        </p>
+      {/* Page Banner */}
+      <div className="page-banner">
+        <h1>Berita Terkini</h1>
+        <p>Informasi terbaru seputar kegiatan dan layanan RSU PKU Muhammadiyah Sragen</p>
       </div>
 
-      <div className="section" style={{ paddingTop: '0' }}>
+      <div className="section">
         <div className="container">
           {loading ? (
             <div className="loading-spinner"><div className="spinner" /></div>
           ) : error ? (
-            // ✅ Tampilan jika terjadi error saat fetch data
             <div className="empty-state" style={{ marginTop: '40px', color: 'var(--danger, #e74c3c)' }}>
               <IoAlertCircleOutline size={48} />
               <p>{error}</p>
@@ -66,34 +84,38 @@ export default function News() {
           ) : news.length > 0 ? (
             <div className="cards-grid cards-grid-3">
               {news.map(n => (
-                <article key={n.id} className="card">
-                  {/* ✅ Logika gambar yang lebih aman */}
+                <article 
+                  key={n.id} 
+                  className="card news-card" 
+                  onClick={() => openModal(n)}
+                >
                   {n.gambar && !brokenImages[n.id] ? (
                     <img 
                       src={`${IMAGE_URL}${n.gambar}`} 
                       alt={n.judul} 
                       className="card-img" 
-                      onError={() => handleImageError(n.id)} // Jika gambar error, tampilkan placeholder
+                      onError={() => handleImageError(n.id)}
                     />
                   ) : (
                     <div className="card-img-placeholder"><IoNewspaperOutline size={48} /></div>
                   )}
                   
                   <div className="card-body">
+                    <span className="card-tag">Berita</span>
                     <div className="card-date">
+                      <IoCalendarOutline style={{ marginRight: 4, verticalAlign: 'middle' }} />
                       {formatDate(n.tanggal)}
                     </div>
-                    <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>{n.judul}</h3>
+                    <h3>{n.judul}</h3>
                     
-                    {/* Potong teks jika terlalu panjang agar card rapi */}
-                    <p style={{ fontSize: '0.88rem', lineHeight: 1.7, color: 'var(--text-light)' }}>
-                      {n.isi && n.isi.length > 100 ? n.isi.substring(0, 100) + '...' : n.isi}
+                    <p className="line-clamp-3" style={{ fontSize: '0.88rem' }}>
+                      {n.isi}
                     </p>
                     
-                    {/* Opsional: Tambahkan link ke halaman detail berita jika ada */}
-                    {/* <Link to={`/news/${n.id}`} className="btn-read-more" style={{ marginTop: '12px', display: 'inline-block' }}>
-                      Baca Selengkapnya
-                    </Link> */}
+                    <div className="news-view-more">
+                      <span>Baca Selengkapnya</span>
+                      <span className="arrow">→</span>
+                    </div>
                   </div>
                 </article>
               ))}
@@ -107,6 +129,53 @@ export default function News() {
           )}
         </div>
       </div>
+
+      {/* Modal Detail Berita */}
+      {selectedNews && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal news-modal" onClick={e => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={closeModal}>
+              <IoClose />
+            </button>
+            
+            <div className="modal-image-container">
+              {selectedNews.gambar && !brokenImages[selectedNews.id] ? (
+                <img 
+                  src={`${IMAGE_URL}${selectedNews.gambar}`} 
+                  alt={selectedNews.judul} 
+                  className="modal-image"
+                  onError={() => handleImageError(selectedNews.id)}
+                />
+              ) : (
+                <div className="modal-image-placeholder">
+                  <IoNewspaperOutline size={64} />
+                </div>
+              )}
+            </div>
+            
+            <div className="modal-content">
+              <span className="modal-tag">Berita Terbaru</span>
+              <h2 className="modal-title">{selectedNews.judul}</h2>
+              
+              <div className="modal-date">
+                <IoCalendarOutline />
+                <span>Diterbitkan pada {formatDate(selectedNews.tanggal)}</span>
+              </div>
+              
+              <div className="modal-description">
+                <h3>Isi Berita</h3>
+                <p style={{ whiteSpace: 'pre-line' }}>{selectedNews.isi}</p>
+              </div>
+              
+              <div className="modal-actions">
+                <button onClick={closeModal} className="btn btn-primary btn-lg">
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
