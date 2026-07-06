@@ -141,15 +141,7 @@ export default function Promotions() {
               )}
               
               <div className="modal-actions">
-                <a 
-                  href="https://wa.me/6287878091132" 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="btn btn-primary btn-lg"
-                >
-                  <IoGiftOutline /> Klaim Promo Sekarang
-                </a>
-                <button onClick={closeModal} className="btn btn-outline-dark btn-lg">
+                <button onClick={closeModal} className="btn btn-primary btn-lg">
                   Tutup
                 </button>
               </div>
