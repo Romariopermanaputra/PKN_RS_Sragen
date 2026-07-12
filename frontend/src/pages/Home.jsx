@@ -387,36 +387,34 @@ export default function Home() {
       {promos.length > 0 && (
         <section className="section" id="promo-section" style={{ backgroundColor: '#f9fafb' }}>
           <div className="container">
-            <div className="promo-jih-layout">
-              <div className="promo-jih-left">
-                <h2 className="promo-jih-title">Promo Menarik</h2>
-                <Link to="/promotions" className="btn btn-primary" style={{ marginBottom: 24, display: 'inline-flex' }}>
-                  Lihat Semua Promo <IoArrowForwardOutline style={{ marginLeft: 8 }} />
-                </Link>
-              </div>
-              <div className="promo-jih-right">
-                <Swiper
-                  slidesPerView={'auto'}
-                  centeredSlides={true}
-                  spaceBetween={30}
-                  pagination={{ clickable: true }}
-                  modules={[Pagination]}
-                  className="promo-swiper"
-                >
-                  {promos.map(p => (
-                    <SwiperSlide key={p.id} className="promo-swiper-slide">
-                      <div className="promo-img-only" onClick={() => setSelectedPromo(p)}>
-                        {p.gambar ? (
-                          <img src={`${IMAGE_URL}${p.gambar}`} alt={p.judul} />
-                        ) : (
-                          <div className="card-img-placeholder"><IoMedkitOutline size={48} /></div>
-                        )}
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-              </div>
+            <div className="promo-top-header">
+              <h2 className="promo-jih-title">Promo Menarik</h2>
+              <Link to="/promotions" className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                Lihat Semua Promo <IoArrowForwardOutline />
+              </Link>
             </div>
+          </div>
+          <div className="promo-swiper-wrap">
+            <Swiper
+              slidesPerView={'auto'}
+              centeredSlides={true}
+              spaceBetween={24}
+              pagination={{ clickable: true }}
+              modules={[Pagination]}
+              className="promo-swiper"
+            >
+              {promos.map(p => (
+                <SwiperSlide key={p.id} className="promo-swiper-slide">
+                  <div className="promo-img-only" onClick={() => setSelectedPromo(p)}>
+                    {p.gambar ? (
+                      <img src={`${IMAGE_URL}${p.gambar}`} alt={p.judul} />
+                    ) : (
+                      <div className="card-img-placeholder"><IoMedkitOutline size={48} /></div>
+                    )}
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         </section>
       )}
