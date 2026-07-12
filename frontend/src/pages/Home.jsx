@@ -389,9 +389,8 @@ export default function Home() {
           <div className="container">
             <div className="promo-jih-layout">
               <div className="promo-jih-left">
-                <span className="promo-jih-subtitle">SAY HELLO TO FUTURE</span>
                 <h2 className="promo-jih-title">Promo Menarik</h2>
-                <Link to="/promotions" className="btn btn-primary" style={{ marginTop: 24, display: 'inline-flex' }}>
+                <Link to="/promotions" className="btn btn-primary" style={{ marginBottom: 24, display: 'inline-flex' }}>
                   Lihat Semua Promo <IoArrowForwardOutline style={{ marginLeft: 8 }} />
                 </Link>
               </div>

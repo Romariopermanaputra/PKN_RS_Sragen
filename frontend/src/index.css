@@ -2474,41 +2474,26 @@ p { margin-bottom: 1rem; line-height: 1.75; }
   flex-direction: column;
   gap: 2rem;
   align-items: center;
-}
-
-@media (min-width: 1024px) {
-  .promo-jih-layout {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+  width: 100%;
 }
 
 .promo-jih-left {
-  flex: 0 0 35%;
-  text-align: left;
-}
-
-.promo-jih-subtitle {
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #64748b;
-  font-weight: 600;
-  display: block;
-  margin-bottom: 0.5rem;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .promo-jih-title {
   font-size: 2.5rem;
   font-weight: 700;
   color: #1e293b;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   line-height: 1.2;
 }
 
 .promo-jih-right {
-  flex: 0 0 60%;
   width: 100%;
   overflow: hidden;
 }
@@ -2528,7 +2513,7 @@ p { margin-bottom: 1rem; line-height: 1.75; }
 
 @media (min-width: 768px) {
   .promo-swiper-slide {
-    width: 350px !important;
+    width: 600px !important;
   }
 }
 
