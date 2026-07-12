@@ -405,21 +405,12 @@ export default function Home() {
                 >
                   {promos.map(p => (
                     <SwiperSlide key={p.id} className="promo-swiper-slide">
-                      <div className="promo-card" onClick={() => setSelectedPromo(p)} style={{ margin: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                      <div className="promo-img-only" onClick={() => setSelectedPromo(p)}>
                         {p.gambar ? (
-                          <img src={`${IMAGE_URL}${p.gambar}`} alt={p.judul} className="card-img" style={{ flexGrow: 1, objectFit: 'cover' }} />
+                          <img src={`${IMAGE_URL}${p.gambar}`} alt={p.judul} />
                         ) : (
-                          <div className="card-img-placeholder" style={{ flexGrow: 1 }}><IoMedkitOutline size={48} /></div>
+                          <div className="card-img-placeholder"><IoMedkitOutline size={48} /></div>
                         )}
-                        <div className="card-body" style={{ flexGrow: 0 }}>
-                          <span className="card-tag">Promo</span>
-                          <h3>{p.judul}</h3>
-                          {p.tanggal_berakhir && (
-                            <div className="card-date" style={{ marginTop: 8 }}>
-                              s/d {new Date(p.tanggal_berakhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                            </div>
-                          )}
-                        </div>
                       </div>
                     </SwiperSlide>
                   ))}
