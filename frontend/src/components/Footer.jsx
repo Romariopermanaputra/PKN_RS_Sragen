@@ -23,8 +23,7 @@ export default function Footer() {
           <ul className="footer-links">
             <li><Link to="/">Beranda</Link></li>
             <li><Link to="/doctors">Dokter</Link></li>
-            <li><Link to="/schedule">Jadwal Praktek</Link></li>
-            <li><Link to="/facilities">Fasilitas</Link></li>
+            <li><Link to="/schedule">Jadwal Praktik</Link></li>
             <li><Link to="/news">Berita</Link></li>
             <li><Link to="/promotions">Promo</Link></li>
           </ul>
@@ -34,10 +33,7 @@ export default function Footer() {
         <div>
           <h4>Layanan</h4>
           <ul className="footer-links">
-            <li><Link to="/facilities">IGD 24 Jam</Link></li>
-            <li><Link to="/facilities">Rawat Inap</Link></li>
-            <li><Link to="/facilities">Poliklinik</Link></li>
-            <li><Link to="/facilities">Laboratorium</Link></li>
+            <li><Link to="/service/trauma-center">Trauma Center</Link></li>
             <li><Link to="/achievements">Prestasi</Link></li>
             <li><Link to="/contact">Hubungi Kami</Link></li>
           </ul>

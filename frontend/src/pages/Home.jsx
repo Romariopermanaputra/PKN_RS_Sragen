@@ -6,7 +6,7 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/effect-coverflow'
 import { Pagination, EffectCoverflow } from 'swiper/modules'
-import api, { getNews, getPromotions, getFacilities, getAchievements, IMAGE_URL } from '../services/api'
+import api, { getNews, getPromotions, getAchievements, IMAGE_URL } from '../services/api'
 import heroImg1 from '../assets/hero1.png'
 import heroImg2 from '../assets/hero2.png'
 import heroImg3 from '../assets/hero3.png'
@@ -51,14 +51,11 @@ export default function Home() {
   const navigate = useNavigate()
   const [news, setNews] = useState([])
   const [promos, setPromos] = useState([])
-  const [facilities, setFacilities] = useState([])
   const [achievements, setAchievements] = useState([])
   const [linktree, setLinktree] = useState('')
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [activeTab, setActiveTab] = useState('layanan')
   const [selectedNews, setSelectedNews] = useState(null)
   const [selectedPromo, setSelectedPromo] = useState(null)
-  const [selectedFacility, setSelectedFacility] = useState(null)
   const [brokenImages, setBrokenImages] = useState({})
 
   // Swipe logic
@@ -69,7 +66,6 @@ export default function Home() {
   useEffect(() => {
     getNews().then(setNews).catch(() => {})
     getPromotions().then(setPromos).catch(() => {})
-    getFacilities().then(setFacilities).catch(() => {})
     getAchievements().then(setAchievements).catch(() => {})
     api.get('/settings/linktree').then(res => setLinktree(res.data.linktree_url)).catch(() => {})
   }, [])
@@ -106,10 +102,9 @@ export default function Home() {
       if (e.key === 'Escape') {
         setSelectedNews(null)
         setSelectedPromo(null)
-        setSelectedFacility(null)
       }
     }
-    if (selectedNews || selectedPromo || selectedFacility) {
+    if (selectedNews || selectedPromo) {
       window.addEventListener('keydown', handleEsc)
       document.body.style.overflow = 'hidden'
     }
@@ -117,7 +112,7 @@ export default function Home() {
       window.removeEventListener('keydown', handleEsc)
       document.body.style.overflow = ''
     }
-  }, [selectedNews, selectedPromo, selectedFacility])
+  }, [selectedNews, selectedPromo])
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Tanggal tidak tersedia'
@@ -143,7 +138,6 @@ export default function Home() {
   const closeModal = () => {
     setSelectedNews(null)
     setSelectedPromo(null)
-    setSelectedFacility(null)
   }
 
   return (
@@ -277,13 +271,7 @@ export default function Home() {
             <p>Pilih kategori layanan untuk melihat detail</p>
           </div>
 
-          <div className="tabs-nav">
-            <button className={`tab-btn ${activeTab === 'layanan' ? 'active' : ''}`} onClick={() => setActiveTab('layanan')}>Layanan Unggulan</button>
-            <button className={`tab-btn ${activeTab === 'rawat-inap' ? 'active' : ''}`} onClick={() => setActiveTab('rawat-inap')}>Rawat Inap</button>
-          </div>
-
-          {activeTab === 'layanan' && (
-            <div className="layanan-unggulan-layout">
+          <div className="layanan-unggulan-layout">
               <div className="layanan-unggulan-links">
                 <Link to="/service/trauma-center" className="service-pill">
                   <span>Trauma Center (One Day Service)</span>
@@ -306,40 +294,6 @@ export default function Home() {
                 <img src={heroImg3} alt="Layanan Unggulan" className="layanan-unggulan-image" />
               </div>
             </div>
-          )}
-
-          {activeTab === 'rawat-inap' && (
-            <div className="cards-grid cards-grid-3">
-              {facilities.length > 0 ? facilities.filter(f => f.status_aktif !== false).slice(0, 6).map(f => (
-                <div key={f.id} className="card facility-card" style={{ cursor: 'pointer' }} onClick={() => setSelectedFacility(f)}>
-                  {f.gambar ? (
-                    <img src={`${IMAGE_URL}${f.gambar}`} alt={f.nama} className="card-img" />
-                  ) : (
-                    <div className="card-img-placeholder"><IoBusinessOutline /></div>
-                  )}
-                  <div className="card-body">
-                    <h3>{f.nama}</h3>
-                    <p className="line-clamp-2">{f.deskripsi || 'Informasi lebih lanjut hubungi kami.'}</p>
-                    {f.harga_mulai && (
-                      <p className="price-tag" style={{ marginTop: 8, marginBottom: 0 }}>
-                        Mulai Rp {Number(f.harga_mulai).toLocaleString('id-ID')}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )) : (
-                <div className="empty-state" style={{ gridColumn: '1 / -1' }}>
-                  <p>Belum ada data fasilitas rawat inap.</p>
-                </div>
-              )}
-            </div>
-          )}
-
-          <div style={{ textAlign: 'center', marginTop: 32 }}>
-            <Link to="/facilities" className="btn btn-outline-dark">
-              Lihat Semua Fasilitas <IoArrowForwardOutline />
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -591,68 +545,6 @@ export default function Home() {
         document.body
       )}
 
-      {/* Modal Detail Layanan/Fasilitas */}
-      {selectedFacility && createPortal(
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal facility-modal" onClick={e => e.stopPropagation()}>
-            <button className="modal-close-btn" onClick={closeModal}>
-              <IoClose />
-            </button>
-            
-            <div className="modal-image-container">
-              {selectedFacility.gambar ? (
-                <img 
-                  src={`${IMAGE_URL}${selectedFacility.gambar}`} 
-                  alt={selectedFacility.nama} 
-                  className="modal-image"
-                />
-              ) : (
-                <div className="modal-image-placeholder">
-                  <IoBusinessOutline size={64} />
-                </div>
-              )}
-            </div>
-            
-            <div className="modal-content">
-              <span className="modal-tag">Fasilitas & Layanan</span>
-              <h2 className="modal-title">{selectedFacility.nama}</h2>
-              
-              <div className="modal-description">
-                <h3>Deskripsi</h3>
-                <p>{selectedFacility.deskripsi || 'Tidak ada deskripsi.'}</p>
-              </div>
-              
-              {(selectedFacility.harga_mulai || selectedFacility.jumlah_tersedia !== undefined) && (
-                <div className="modal-terms" style={{ marginTop: 24, display: 'flex', gap: 24 }}>
-                  {selectedFacility.harga_mulai && (
-                    <div>
-                      <h3>Harga Mulai</h3>
-                      <p className="price-tag" style={{ fontSize: '1.2rem', margin: 0 }}>
-                        Rp {Number(selectedFacility.harga_mulai).toLocaleString('id-ID')}
-                      </p>
-                    </div>
-                  )}
-                  {selectedFacility.jumlah_tersedia !== undefined && (
-                    <div>
-                      <h3>Status</h3>
-                      <p className={Number(selectedFacility.jumlah_tersedia || 0) > 0 ? 'badge-available' : 'badge-unavailable'} style={{ fontSize: '1rem', padding: '6px 12px' }}>
-                        {Number(selectedFacility.jumlah_tersedia || 0) > 0 ? `${selectedFacility.jumlah_tersedia} tersedia` : 'Penuh'}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-              
-              <div className="modal-actions" style={{ marginTop: 32 }}>
-                <button onClick={closeModal} className="btn btn-primary btn-lg">
-                  Tutup
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
     </div>
   )
 }

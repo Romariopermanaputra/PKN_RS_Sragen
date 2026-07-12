@@ -7,7 +7,6 @@ const navItems = [
   { path: '/admin/doctors', label: 'Dokter', icon: 'stethoscope' },
   { path: '/admin/schedules', label: 'Jadwal Praktik', icon: 'calendar-time' },
   { path: '/admin/news', label: 'Berita', icon: 'news' },
-  { path: '/admin/facilities', label: 'Fasilitas', icon: 'building-hospital' },
   { path: '/admin/achievements', label: 'Prestasi', icon: 'trophy' },
   { path: '/admin/promotions', label: 'Promo', icon: 'discount' },
   { path: '/admin/contact', label: 'Kontak', icon: 'address-book' },

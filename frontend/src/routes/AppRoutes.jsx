@@ -6,7 +6,6 @@ import PrivateRoute from '../components/PrivateRoute'
 // Public Pages
 import Home from '../pages/Home'
 import Doctors from '../pages/Doctors'
-import Facilities from '../pages/Facilities'
 import Schedule from '../pages/Schedule'
 import News from '../pages/News'
 import Promotions from '../pages/Promotions'
@@ -31,7 +30,6 @@ export default function AppRoutes() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="doctors" element={<Doctors />} />
-        <Route path="facilities" element={<Facilities />} />
         <Route path="schedule" element={<Schedule />} />
         <Route path="news" element={<News />} />
         <Route path="promotions" element={<Promotions />} />

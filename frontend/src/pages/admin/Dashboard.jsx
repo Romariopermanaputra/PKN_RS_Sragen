@@ -20,14 +20,7 @@ const statsConfig = [
     color: 'leaf',
     path: '/admin/news',
   },
-  {
-    key: 'facilities',
-    label: 'Fasilitas',
-    meta: 'Unit layanan aktif',
-    icon: 'building-hospital',
-    color: 'sage',
-    path: '/admin/facilities',
-  },
+
   {
     key: 'promotions',
     label: 'Total Promosi',
@@ -92,13 +85,7 @@ const quickActions = [
     path: '/admin/news',
     color: 'leaf',
   },
-  {
-    icon: 'building-plus',
-    label: 'Kelola Fasilitas',
-    desc: 'Atur unit layanan',
-    path: '/admin/facilities',
-    color: 'sage',
-  },
+
   {
     icon: 'discount-2',
     label: 'Kelola Promosi',
@@ -241,7 +228,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState({
     doctors: 0,
     news: 0,
-    facilities: 0,
+
     promotions: 0,
     achievements: 0,
     schedules: 0,
@@ -261,11 +248,11 @@ export default function Dashboard() {
       console.error('Error fetching stats:', err);
       // Fallback: fetch individual endpoints jika dashboard belum ada
       try {
-        const [doctorsRes, newsRes, facilitiesRes, promotionsRes, achievementsRes, schedulesRes] =
+        const [doctorsRes, newsRes, promotionsRes, achievementsRes, schedulesRes] =
           await Promise.allSettled([
             api.get('/doctors'),
             api.get('/news'),
-            api.get('/facilities'),
+
             api.get('/promotions'),
             api.get('/achievements'),
             api.get('/schedules'),
@@ -273,7 +260,7 @@ export default function Dashboard() {
         setStats({
           doctors: doctorsRes.value?.data?.length ?? 0,
           news: newsRes.value?.data?.length ?? 0,
-          facilities: facilitiesRes.value?.data?.length ?? 0,
+
           promotions: promotionsRes.value?.data?.length ?? 0,
           achievements: achievementsRes.value?.data?.length ?? 0,
           schedules: schedulesRes.value?.data?.length ?? 0,
