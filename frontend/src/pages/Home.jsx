@@ -4,7 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/pagination'
-import { Pagination } from 'swiper/modules'
+import 'swiper/css/effect-coverflow'
+import { Pagination, EffectCoverflow } from 'swiper/modules'
 import api, { getNews, getPromotions, getFacilities, getAchievements, IMAGE_URL } from '../services/api'
 import heroImg1 from '../assets/hero1.png'
 import heroImg2 from '../assets/hero2.png'
@@ -396,11 +397,20 @@ export default function Home() {
           </div>
           <div className="promo-swiper-wrap">
             <Swiper
+              effect={'coverflow'}
+              grabCursor={true}
               slidesPerView={'auto'}
               centeredSlides={true}
-              spaceBetween={24}
+              coverflowEffect={{
+                rotate: 0,
+                stretch: 0,
+                depth: 100,
+                modifier: 2.5,
+                slideShadows: false,
+                scale: 0.82
+              }}
               pagination={{ clickable: true }}
-              modules={[Pagination]}
+              modules={[Pagination, EffectCoverflow]}
               className="promo-swiper"
             >
               {promos.map(p => (

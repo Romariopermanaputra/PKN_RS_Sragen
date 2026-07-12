@@ -2499,9 +2499,8 @@ p { margin-bottom: 1rem; line-height: 1.75; }
 .promo-swiper-slide {
   width: 300px !important;
   height: auto;
-  transition: transform 0.4s ease, opacity 0.4s ease;
+  transition: opacity 0.4s ease;
   opacity: 0.45;
-  transform: scale(0.82);
   pointer-events: none;
 }
 
@@ -2513,7 +2512,6 @@ p { margin-bottom: 1rem; line-height: 1.75; }
 
 .promo-swiper-slide.swiper-slide-active {
   opacity: 1;
-  transform: scale(1);
   pointer-events: auto;
   z-index: 2;
 }
