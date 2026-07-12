@@ -1,6 +1,10 @@
 import { useEffect, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router-dom'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
+import 'swiper/css/pagination'
+import { Pagination } from 'swiper/modules'
 import api, { getNews, getPromotions, getFacilities, getAchievements, IMAGE_URL } from '../services/api'
 import heroImg1 from '../assets/hero1.png'
 import heroImg2 from '../assets/hero2.png'
@@ -381,37 +385,47 @@ export default function Home() {
 
       {/* ===== PROMO ===== */}
       {promos.length > 0 && (
-        <section className="section" id="promo-section">
+        <section className="section" id="promo-section" style={{ backgroundColor: '#f9fafb' }}>
           <div className="container">
-            <div className="section-header-left">
-              <div>
-                <span className="section-label" style={{ marginBottom: 10, display: 'inline-block' }}>Spesial</span>
-                <h2>Promo & Layanan Spesial</h2>
+            <div className="promo-jih-layout">
+              <div className="promo-jih-left">
+                <span className="promo-jih-subtitle">SAY HELLO TO FUTURE</span>
+                <h2 className="promo-jih-title">Promo Menarik</h2>
+                <Link to="/promotions" className="btn btn-primary" style={{ marginTop: 24, display: 'inline-flex' }}>
+                  Lihat Semua Promo <IoArrowForwardOutline style={{ marginLeft: 8 }} />
+                </Link>
               </div>
-              <Link to="/promotions" className="btn btn-outline-dark btn-sm">
-                Lihat Semua <IoArrowForwardOutline />
-              </Link>
-            </div>
-            <div className="cards-grid cards-grid-3">
-              {promos.slice(0, 3).map(p => (
-                <div key={p.id} className="card promo-card" style={{ cursor: 'pointer' }} onClick={() => setSelectedPromo(p)}>
-                  {p.gambar ? (
-                    <img src={`${IMAGE_URL}${p.gambar}`} alt={p.judul} className="card-img" />
-                  ) : (
-                    <div className="card-img-placeholder"><IoMedkitOutline /></div>
-                  )}
-                  <div className="card-body">
-                    <span className="card-tag">Promo</span>
-                    <h3>{p.judul}</h3>
-                    <p className="line-clamp-2">{p.deskripsi}</p>
-                    {p.tanggal_berakhir && (
-                      <div className="card-date" style={{ marginTop: 8 }}>
-                        Berlaku s/d {new Date(p.tanggal_berakhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+              <div className="promo-jih-right">
+                <Swiper
+                  slidesPerView={'auto'}
+                  centeredSlides={true}
+                  spaceBetween={30}
+                  pagination={{ clickable: true }}
+                  modules={[Pagination]}
+                  className="promo-swiper"
+                >
+                  {promos.map(p => (
+                    <SwiperSlide key={p.id} className="promo-swiper-slide">
+                      <div className="promo-card" onClick={() => setSelectedPromo(p)} style={{ margin: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        {p.gambar ? (
+                          <img src={`${IMAGE_URL}${p.gambar}`} alt={p.judul} className="card-img" style={{ flexGrow: 1, objectFit: 'cover' }} />
+                        ) : (
+                          <div className="card-img-placeholder" style={{ flexGrow: 1 }}><IoMedkitOutline size={48} /></div>
+                        )}
+                        <div className="card-body" style={{ flexGrow: 0 }}>
+                          <span className="card-tag">Promo</span>
+                          <h3>{p.judul}</h3>
+                          {p.tanggal_berakhir && (
+                            <div className="card-date" style={{ marginTop: 8 }}>
+                              s/d {new Date(p.tanggal_berakhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
             </div>
           </div>
         </section>
