@@ -285,20 +285,20 @@ export default function Home() {
           {activeTab === 'layanan' && (
             <div className="layanan-unggulan-layout">
               <div className="layanan-unggulan-links">
-                <Link to="/service/minimally-invasive-surgery" className="service-pill">
-                  <span>Minimally Invasive Surgery</span>
-                  <div className="service-pill-icon"><IoPlayOutline /></div>
-                </Link>
-                <Link to="/service/tht-hearing-center" className="service-pill">
-                  <span>THT Hearing Center</span>
-                  <div className="service-pill-icon"><IoPlayOutline /></div>
-                </Link>
                 <Link to="/service/trauma-center" className="service-pill">
-                  <span>Trauma Center</span>
+                  <span>Trauma Center (One Day Service)</span>
                   <div className="service-pill-icon"><IoPlayOutline /></div>
                 </Link>
-                <Link to="/service/healthy-life-center" className="service-pill">
-                  <span>Healthy Life Center</span>
+                <Link to="/service/ct-scan" className="service-pill">
+                  <span>CT Scan</span>
+                  <div className="service-pill-icon"><IoPlayOutline /></div>
+                </Link>
+                <Link to="/service/hemodialisa" className="service-pill">
+                  <span>Hemodialisa</span>
+                  <div className="service-pill-icon"><IoPlayOutline /></div>
+                </Link>
+                <Link to="/service/usg-4-dimensi" className="service-pill">
+                  <span>USG 4 Dimensi</span>
                   <div className="service-pill-icon"><IoPlayOutline /></div>
                 </Link>
               </div>

@@ -3,48 +3,48 @@ import { IoArrowBackOutline, IoPlayOutline, IoCheckmarkCircleOutline } from 'rea
 import heroImg3 from '../assets/hero3.png'
 
 const servicesData = {
-  'minimally-invasive-surgery': {
-    title: 'Minimally Invasive Surgery',
-    description: 'Merupakan tindakan yang meminimalisir rasa sakit dan resiko komplikasi yang ditimbulkan dari pembedahan. Bedah yang dilakukan melalui sayatan kecil untuk meminimalisir rasa sakit maupun resiko dan mempercepat penyembuhan dari luka operasi tersebut.',
-    features: [
-      'Sayatan operasi yang lebih kecil',
-      'Rasa sakit pasca operasi sangat minimal',
-      'Waktu pemulihan (recovery) jauh lebih cepat',
-      'Risiko infeksi dan komplikasi lebih rendah',
-      'Bekas luka sayatan lebih tersamar'
-    ]
-  },
-  'tht-hearing-center': {
-    title: 'THT Hearing Center',
-    description: 'Pusat layanan kesehatan khusus untuk penanganan berbagai gangguan Telinga, Hidung, dan Tenggorokan (THT), serta masalah pendengaran. Dilengkapi dengan peralatan canggih seperti endoskopi THT dan audiometri.',
-    features: [
-      'Pemeriksaan diagnostik endoskopi THT',
-      'Pemeriksaan fungsi pendengaran komprehensif',
-      'Terapi gangguan keseimbangan (vertigo)',
-      'Penanganan masalah alergi saluran napas atas',
-      'Tenaga medis spesialis THT yang berpengalaman'
-    ]
-  },
   'trauma-center': {
-    title: 'Trauma Center',
-    description: 'Fasilitas pelayanan kesehatan terpadu untuk menangani pasien dengan kondisi gawat darurat dan trauma (kecelakaan kerja, lalu lintas, dsb) secara cepat, tepat, dan komprehensif didukung oleh dokter ahli.',
+    title: 'Trauma Center (One Day Service)',
+    description: 'Adalah layanan cepat, akurat, dan lengkap untuk menangani pasien pasca kecelakaan agar segera mendapatkan pertolongan.',
     features: [
       'Siaga 24 jam dengan tim terlatih kegawatdaruratan',
-      'Fasilitas radiologi (X-Ray, USG, CT Scan) siaga 24 jam',
-      'Ruang operasi emergency yang siap kapanpun',
-      'Kolaborasi multidisiplin dokter spesialis bedah dan ortopedi',
+      'Penanganan cepat pasca kecelakaan lalu lintas atau kerja',
+      'Fasilitas radiologi dan ruang operasi emergency terintegrasi',
+      'Kolaborasi multidisiplin dokter spesialis',
       'Layanan penjemputan ambulans gawat darurat'
     ]
   },
-  'healthy-life-center': {
-    title: 'Healthy Life Center',
-    description: 'Pusat layanan kesehatan preventif dan rehabilitatif yang fokus pada pencegahan penyakit, deteksi dini, dan penerapan gaya hidup sehat untuk meningkatkan kualitas hidup Anda.',
+  'ct-scan': {
+    title: 'CT Scan',
+    description: 'Adalah perlengkapan modern untuk menunjukkan gambar organ dalam yang jauh lebih presisi dan detail dibandingkan dengan rontgen konvensional.',
     features: [
-      'Paket Medical Check Up (MCU) yang lengkap dan fleksibel',
-      'Konsultasi program diet dengan spesialis gizi klinis',
-      'Program rehabilitasi medik dan fisioterapi',
-      'Pemeriksaan komposisi tubuh dan kebugaran jantung',
-      'Layanan vaksinasi dewasa dan travel medicine'
+      'Pencitraan medis resolusi dan presisi tinggi',
+      'Diagnosis penyakit dan cedera internal lebih akurat',
+      'Proses pemindaian cepat dan nyaman bagi pasien',
+      'Peralatan modern berteknologi terkini',
+      'Didukung oleh dokter spesialis radiologi berpengalaman'
+    ]
+  },
+  'hemodialisa': {
+    title: 'Hemodialisa',
+    description: 'Adalah layanan cuci darah untuk menangani pasien gagal ginjal dengan menggunakan perlengkapan yang steril, canggih, dan modern.',
+    features: [
+      'Peralatan canggih dengan standar sterilisasi tinggi',
+      'Ruang perawatan yang sangat nyaman selama proses cuci darah',
+      'Didukung oleh dokter spesialis penyakit dalam dan perawat bersertifikat',
+      'Monitoring ketat kondisi pasien selama prosedur',
+      'Pelayanan yang ramah dan bersahabat'
+    ]
+  },
+  'usg-4-dimensi': {
+    title: 'USG 4 Dimensi',
+    description: 'Adalah layanan medis yang dilakukan pada masa kehamilan untuk mendapat video pergerakan bayi dalam rahim. Prosedur ini dapat memberikan gambaran yang tidak terlihat pada USG 2D maupun 3D.',
+    features: [
+      'Tampilan visual janin lebih nyata dan jelas',
+      'Dapat melihat gerakan bayi secara real-time (berupa video)',
+      'Membantu mendeteksi kelainan bawaan sejak dini',
+      'Prosedur sangat aman untuk ibu dan janin',
+      'Menciptakan ikatan emosional (bonding) yang kuat bagi orang tua'
     ]
   }
 }
