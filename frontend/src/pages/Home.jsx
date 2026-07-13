@@ -7,9 +7,8 @@ import 'swiper/css/pagination'
 import 'swiper/css/effect-coverflow'
 import { Pagination, EffectCoverflow } from 'swiper/modules'
 import api, { getNews, getPromotions, getAchievements, IMAGE_URL } from '../services/api'
-import heroImg1 from '../assets/hero1.png'
-import heroImg2 from '../assets/hero2.png'
-import heroImg3 from '../assets/hero3.png'
+import gedungImg from '../assets/gedung_pku.png'
+import kamarImg from '../assets/kamar.png'
 import logoImg from '../assets/logo_rs.jpg'
 import {
   IoSearchOutline,
@@ -31,17 +30,12 @@ import {
 
 const heroSlides = [
   {
-    image: heroImg1,
+    image: gedungImg,
     title: 'Layanan Kesehatan Terpercaya untuk Anda & Keluarga',
     subtitle: 'RSU PKU Muhammadiyah Sragen hadir memberikan pelayanan kesehatan komprehensif dengan fasilitas modern dan tim dokter profesional.',
   },
   {
-    image: heroImg2,
-    title: 'Tim Dokter Profesional & Berpengalaman',
-    subtitle: 'Didukung oleh lebih dari 70 dokter spesialis berpengalaman dari berbagai bidang keahlian medis.',
-  },
-  {
-    image: heroImg3,
+    image: kamarImg,
     title: 'Fasilitas Modern & Ruang Perawatan Nyaman',
     subtitle: 'Dilengkapi peralatan medis terkini dan ruang perawatan yang nyaman untuk proses pemulihan optimal.',
   },
@@ -291,7 +285,7 @@ export default function Home() {
                 </Link>
               </div>
               <div className="layanan-unggulan-img">
-                <img src={heroImg3} alt="Layanan Unggulan" className="layanan-unggulan-image" />
+                <img src={kamarImg} alt="Layanan Unggulan" className="layanan-unggulan-image" />
               </div>
             </div>
         </div>
