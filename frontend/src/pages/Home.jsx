@@ -9,6 +9,7 @@ import { Pagination, EffectCoverflow } from 'swiper/modules'
 import api, { getNews, getPromotions, getAchievements, IMAGE_URL } from '../services/api'
 import gedungImg from '../assets/gedung_pku.png'
 import kamarImg from '../assets/kamar.png'
+import dokterImg from '../assets/dokter.jpg'
 import logoImg from '../assets/logo_rs.jpg'
 import {
   IoSearchOutline,
@@ -33,6 +34,11 @@ const heroSlides = [
     image: gedungImg,
     title: 'Layanan Kesehatan Terpercaya untuk Anda & Keluarga',
     subtitle: 'RSU PKU Muhammadiyah Sragen hadir memberikan pelayanan kesehatan komprehensif dengan fasilitas modern dan tim dokter profesional.',
+  },
+  {
+    image: dokterImg,
+    title: 'Tim Dokter Profesional & Berpengalaman',
+    subtitle: 'Didukung oleh lebih dari 70 dokter spesialis berpengalaman dari berbagai bidang keahlian medis.',
   },
   {
     image: kamarImg,
