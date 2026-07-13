@@ -1,152 +1,212 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import api from '../../services/api';
+import '../../styles/admin.css';
+
+const emptyForm = { id: null, judul: '', isi: '', gambar: null };
+
+const Toast = ({ msg, type, onClose }) => {
+  useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, [onClose]);
+  return (
+    <div className={`admin-toast admin-toast-${type}`}>
+      <i className={`ti ${type === 'success' ? 'ti-circle-check' : 'ti-circle-x'}`} />
+      {msg}
+    </div>
+  );
+};
 
 export default function NewsAdmin() {
   const [news, setNews] = useState([]);
-  const [formData, setFormData] = useState({ id: null, judul: '', isi: '', gambar: null });
+  const [formData, setFormData] = useState(emptyForm);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [search, setSearch] = useState('');
 
   const location = useLocation();
   const formRef = useRef(null);
 
   useEffect(() => {
     if (location.hash === '#tambah-berita' && formRef.current) {
-      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      formRef.current.classList.add('ring-2', 'ring-teal-500', 'transition-all');
-      setTimeout(() => {
-        formRef.current.classList.remove('ring-2', 'ring-teal-500');
-      }, 2000);
+      setTimeout(() => formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
     }
   }, [location]);
 
   const fetchData = async () => {
     try {
       const res = await api.get('/admin/news');
-      setNews(res.data);
-    } catch (err) { 
-      console.error(err); 
-    }
+      setNews(Array.isArray(res.data) ? res.data : []);
+    } catch (err) { console.error(err); }
   };
 
   useEffect(() => { fetchData(); }, []);
 
+  const showToast = (msg, type = 'success') => setToast({ msg, type });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // 1. Buat FormData
+    setLoading(true);
     const data = new FormData();
     data.append('judul', formData.judul);
     data.append('isi', formData.isi);
-    
-    // 2. Append gambar HANYA jika ada file yang dipilih
-    if (formData.gambar) {
-      data.append('gambar', formData.gambar);
-    }
+    if (formData.gambar) data.append('gambar', formData.gambar);
 
     try {
-      // ✅ PERBAIKAN UTAMA:
-      // Kirim 'data' (FormData) LANGSUNG sebagai parameter kedua.
-      // JANGAN menambahkan config headers { 'Content-Type': 'multipart/form-data' } di sini.
-      // Axios akan otomatis mendeteksi ini adalah FormData dan mengatur header + boundary yang benar.
-      
       if (isEditing) {
         await api.put(`/admin/news/${formData.id}`, data);
+        showToast('Berita berhasil diperbarui!');
       } else {
         await api.post('/admin/news', data);
+        showToast('Berita baru berhasil dipublikasikan!');
       }
-      
-      // Reset form setelah sukses
-      setFormData({ id: null, judul: '', isi: '', gambar: null });
+      setFormData(emptyForm);
       setIsEditing(false);
       fetchData();
-      alert('Berita berhasil disimpan!');
-    } catch (err) { 
-      console.error('Error submit berita:', err);
-      alert('Gagal menyimpan berita'); 
+    } catch (err) {
+      showToast('Gagal menyimpan berita.', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleEdit = (n) => {
     setFormData({ id: n.id, judul: n.judul, isi: n.isi, gambar: null });
     setIsEditing(true);
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Yakin hapus?')) {
+    if (!window.confirm('Yakin ingin menghapus berita ini?')) return;
+    try {
       await api.delete(`/admin/news/${id}`);
       fetchData();
+      showToast('Berita berhasil dihapus.');
+    } catch (err) {
+      showToast('Gagal menghapus berita.', 'error');
     }
   };
 
+  const filtered = news.filter(n => n.judul?.toLowerCase().includes(search.toLowerCase()));
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Kelola Berita</h1>
-      
-      <div ref={formRef} className="bg-white p-6 rounded shadow-md mb-8">
-        <h2 className="text-xl font-semibold mb-4">{isEditing ? 'Edit' : 'Tambah'} Berita</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm">Judul</label>
-            <input 
-              type="text" 
-              className="w-full border p-2" 
-              value={formData.judul} 
-              onChange={e => setFormData({...formData, judul: e.target.value})} 
-              required 
-            />
-          </div>
-          <div>
-            <label className="block text-sm">Isi Berita</label>
-            <textarea 
-              className="w-full border p-2 h-32" 
-              value={formData.isi} 
-              onChange={e => setFormData({...formData, isi: e.target.value})} 
-              required 
-            />
-          </div>
-          <div>
-            <label className="block text-sm">Gambar {isEditing && '(Kosongkan jika tidak ingin mengubah gambar)'}</label>
-            <input 
-              type="file" 
-              accept="image/*"
-              onChange={e => setFormData({...formData, gambar: e.target.files[0]})} 
-            />
-          </div>
-          <div className="flex gap-2">
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Simpan</button>
-            {isEditing && (
-              <button 
-                type="button" 
-                onClick={() => { setIsEditing(false); setFormData({ id: null, judul: '', isi: '', gambar: null }); }} 
-                className="bg-gray-400 text-white px-4 py-2 rounded"
-              >
-                Batal
-              </button>
-            )}
-          </div>
-        </form>
+    <div className="admin-page">
+      {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
+
+      <div className="admin-page-header">
+        <h1>
+          <span className="page-icon"><i className="ti ti-news" /></span>
+          Kelola Berita
+        </h1>
+        <p>Publikasikan dan kelola artikel berita RSU PKU Muhammadiyah Sragen</p>
       </div>
 
-      <table className="min-w-full bg-white shadow-md rounded">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left">Judul</th>
-            <th className="px-6 py-3 text-left">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {news.map(n => (
-            <tr key={n.id} className="border-t">
-              <td className="px-6 py-4">{n.judul}</td>
-              <td className="px-6 py-4">
-                <button onClick={() => handleEdit(n)} className="text-indigo-600 mr-4">Edit</button>
-                <button onClick={() => handleDelete(n.id)} className="text-red-600">Hapus</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="admin-card" ref={formRef}>
+        <div className="admin-card-header">
+          <span className="card-icon"><i className={`ti ${isEditing ? 'ti-edit' : 'ti-file-plus'}`} /></span>
+          <h2>{isEditing ? 'Edit Berita' : 'Tulis Berita Baru'}</h2>
+        </div>
+        <div className="admin-card-body">
+          <form onSubmit={handleSubmit} className="admin-form">
+            <div className="admin-form-group">
+              <label>Judul Berita *</label>
+              <input
+                type="text"
+                value={formData.judul}
+                onChange={e => setFormData({ ...formData, judul: e.target.value })}
+                placeholder="Tulis judul berita yang menarik..."
+                required
+              />
+            </div>
+            <div className="admin-form-group">
+              <label>Isi Berita *</label>
+              <textarea
+                rows="8"
+                value={formData.isi}
+                onChange={e => setFormData({ ...formData, isi: e.target.value })}
+                placeholder="Tulis konten berita selengkap mungkin..."
+                required
+              />
+            </div>
+            <div className="admin-form-group">
+              <label>Gambar Berita {isEditing && '(Kosongkan jika tidak ingin mengubah)'}</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={e => setFormData({ ...formData, gambar: e.target.files[0] })}
+              />
+            </div>
+            <div className="admin-form-actions">
+              <button type="submit" className="admin-btn admin-btn-primary" disabled={loading}>
+                {loading
+                  ? <><span className="admin-spinner" /> Menyimpan...</>
+                  : <><i className="ti ti-device-floppy" /> {isEditing ? 'Perbarui Berita' : 'Publikasikan'}</>
+                }
+              </button>
+              {isEditing && (
+                <button type="button" className="admin-btn admin-btn-secondary" onClick={() => { setIsEditing(false); setFormData(emptyForm); }}>
+                  <i className="ti ti-x" /> Batal
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="admin-card">
+        <div className="admin-card-header" style={{ justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="card-icon"><i className="ti ti-list" /></span>
+            <h2>Daftar Berita ({news.length})</h2>
+          </div>
+          <div className="admin-form-group" style={{ margin: 0, minWidth: 220 }}>
+            <input
+              type="text"
+              placeholder="🔍 Cari judul berita..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ padding: '8px 12px', fontSize: '0.85rem' }}
+            />
+          </div>
+        </div>
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Judul</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((n, i) => (
+                <tr key={n.id}>
+                  <td style={{ color: '#9FCB98', fontWeight: 700, fontSize: '0.8rem' }}>{i + 1}</td>
+                  <td><strong style={{ color: '#1e3a21' }}>{n.judul}</strong></td>
+                  <td>
+                    <div className="table-actions">
+                      <button className="admin-btn admin-btn-secondary admin-btn-sm" onClick={() => handleEdit(n)}>
+                        <i className="ti ti-edit" /> Edit
+                      </button>
+                      <button className="admin-btn admin-btn-danger admin-btn-sm" onClick={() => handleDelete(n.id)}>
+                        <i className="ti ti-trash" /> Hapus
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {filtered.length === 0 && (
+                <tr><td colSpan="3">
+                  <div className="admin-empty-state">
+                    <div className="empty-icon"><i className="ti ti-news-off" /></div>
+                    <p>Belum ada berita yang dipublikasikan.</p>
+                    <span>Gunakan form di atas untuk menulis berita baru.</span>
+                  </div>
+                </td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
