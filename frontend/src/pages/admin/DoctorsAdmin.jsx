@@ -173,7 +173,7 @@ export default function DoctorsAdmin() {
                   required
                 />
                 <datalist id="spesialis-options">
-                  {specialties.map(item => <option key={item} value={item} />)}
+                  {specialties.map(item => <option key={item.id_spesialis || item.nama_spesialis || item} value={item.nama_spesialis || item} />)}
                 </datalist>
               </div>
               <div className="admin-form-group">
@@ -186,7 +186,7 @@ export default function DoctorsAdmin() {
                   placeholder="Opsional"
                 />
                 <datalist id="subspesialis-options">
-                  {subspecialties.map(item => <option key={item} value={item} />)}
+                  {subspecialties.map(item => <option key={item.id_subspesialis || item.nama_subspesialis || item} value={item.nama_subspesialis || item} />)}
                 </datalist>
               </div>
               <div className="admin-form-group">

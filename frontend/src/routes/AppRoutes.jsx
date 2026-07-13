@@ -22,7 +22,6 @@ import FacilitiesAdmin from '../pages/admin/FacilitiesAdmin'
 import ScheduleAdmin from '../pages/admin/ScheduleAdmin'
 import NewsAdmin from '../pages/admin/NewsAdmin'
 import PromotionsAdmin from '../pages/admin/PromotionsAdmin'
-import AchievementsAdmin from '../pages/admin/AchievementsAdmin'
 
 export default function AppRoutes() {
   return (
@@ -47,7 +46,6 @@ export default function AppRoutes() {
         <Route path="schedules" element={<ScheduleAdmin />} />
         <Route path="news" element={<NewsAdmin />} />
         <Route path="facilities" element={<FacilitiesAdmin />} />
-        <Route path="achievements" element={<AchievementsAdmin />} />
         <Route path="promotions" element={<PromotionsAdmin />} />
         {/* Contact and Settings placeholder or will map later */}
       </Route>

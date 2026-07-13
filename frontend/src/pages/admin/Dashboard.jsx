@@ -7,7 +7,6 @@ const statsConfig = [
   { key: 'doctors',   label: 'Total Dokter',   meta: 'Tenaga medis aktif',      icon: 'stethoscope',  path: '/admin/doctors',    accent: '#346739', light: '#E9F3E4' },
   { key: 'news',      label: 'Berita',          meta: 'Artikel dipublikasikan',  icon: 'news',         path: '/admin/news',       accent: '#1d4ed8', light: '#dbeafe' },
   { key: 'promotions',label: 'Promosi',         meta: 'Promo terdaftar',         icon: 'discount-2',   path: '/admin/promotions', accent: '#7c3aed', light: '#ede9fe' },
-  { key: 'achievements',label:'Prestasi',       meta: 'Penghargaan tercatat',    icon: 'trophy',       path: '/admin/achievements',accent:'#c2410c', light: '#ffedd5' },
   { key: 'schedules', label: 'Jadwal Praktik',  meta: 'Slot jadwal aktif',       icon: 'calendar-time',path: '/admin/schedules',  accent: '#be185d', light: '#fce7f3' },
 ];
 
@@ -15,7 +14,6 @@ const quickActions = [
   { icon: 'user-plus',    label: 'Tambah Dokter',    desc: 'Data dokter baru',        path: '/admin/doctors',     accent: '#346739', light: '#E9F3E4' },
   { icon: 'file-plus',    label: 'Tulis Berita',      desc: 'Publikasi artikel',       path: '/admin/news',        accent: '#1d4ed8', light: '#dbeafe' },
   { icon: 'discount-2',   label: 'Tambah Promo',      desc: 'Promo & penawaran',       path: '/admin/promotions',  accent: '#7c3aed', light: '#ede9fe' },
-  { icon: 'award',        label: 'Catat Prestasi',    desc: 'Penghargaan rumah sakit', path: '/admin/achievements', accent: '#c2410c', light: '#ffedd5' },
   { icon: 'calendar-plus',label: 'Jadwal Praktik',   desc: 'Atur jadwal dokter',      path: '/admin/schedules',   accent: '#be185d', light: '#fce7f3' },
 ];
 
@@ -29,7 +27,7 @@ function timeAgo(dateStr) {
 }
 
 export default function Dashboard() {
-  const [stats, setStats] = useState({ doctors: 0, news: 0, promotions: 0, achievements: 0, schedules: 0 });
+  const [stats, setStats] = useState({ doctors: 0, news: 0, promotions: 0, schedules: 0 });
   const [activities, setActivities] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [isLoadingActivities, setIsLoadingActivities] = useState(true);
@@ -43,19 +41,17 @@ export default function Dashboard() {
       setLastUpdated(new Date());
     } catch {
       try {
-        const [doctorsRes, newsRes, promotionsRes, achievementsRes, schedulesRes] =
+        const [doctorsRes, newsRes, promotionsRes, schedulesRes] =
           await Promise.allSettled([
             api.get('/doctors'),
             api.get('/news'),
             api.get('/promotions'),
-            api.get('/achievements'),
             api.get('/schedules'),
           ]);
         setStats({
           doctors: doctorsRes.value?.data?.length ?? 0,
           news: newsRes.value?.data?.length ?? 0,
           promotions: promotionsRes.value?.data?.length ?? 0,
-          achievements: achievementsRes.value?.data?.length ?? 0,
           schedules: schedulesRes.value?.data?.length ?? 0,
         });
         setLastUpdated(new Date());
