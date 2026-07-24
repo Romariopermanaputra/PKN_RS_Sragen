@@ -91,6 +91,11 @@ export const getFacilities = async () => {
   return Array.isArray(res.data) ? res.data : []
 }
 
+export const getServices = async () => {
+  const res = await api.get('/services')
+  return Array.isArray(res.data) ? res.data : []
+}
+
 export const getSchedule = async () => {
   const res = await api.get('/schedules')
   return Array.isArray(res.data) ? res.data : []

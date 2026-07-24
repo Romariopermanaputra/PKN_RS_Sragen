@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { getFacilities, IMAGE_URL } from '../services/api'
+import { getServices, IMAGE_URL } from '../services/api'
 import { IoBusinessOutline, IoClose } from 'react-icons/io5'
 
 export default function Facilities() {
@@ -9,7 +9,7 @@ export default function Facilities() {
   const [selectedFacility, setSelectedFacility] = useState(null)
 
   useEffect(() => {
-    getFacilities().then(data => {
+    getServices().then(data => {
       setFac(data)
       setLoading(false)
     }).catch(() => setLoading(false))

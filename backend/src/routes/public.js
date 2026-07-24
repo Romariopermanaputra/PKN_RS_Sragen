@@ -13,6 +13,7 @@ const achievementController = require('../controllers/achievementController');
 const promotionController = require('../controllers/promotionController');
 const contactController = require('../controllers/contactController');
 const settingController = require('../controllers/settingController');
+const serviceController = require('../controllers/serviceController');
 
 router.get('/', (req, res) => {
   res.json({ message: 'Public API' });
@@ -26,6 +27,7 @@ router.get('/schedules', scheduleController.getAll);
 router.get('/news', newsController.getAll);
 router.get('/news/:id', newsController.getById);
 router.get('/facilities', facilityController.getAll);
+router.get('/services', serviceController.getAll);
 router.get('/achievements', achievementController.getAll);
 router.get('/promotions', promotionController.getAllActive);
 router.get('/contact', contactController.get);
