@@ -158,8 +158,8 @@ export default function Home() {
                 <h1>{slide.title}</h1>
                 <p>{slide.subtitle}</p>
                 <div className="hero-actions">
-                  <a className="btn btn-accent btn-lg" href={linktree || '/contact'} target={linktree ? '_blank' : '_self'} rel="noreferrer">
-                    Buat Janji Sekarang
+                  <a className="btn btn-accent btn-lg" href={linktree || 'https://wa.me/6287878091132'} target="_blank" rel="noreferrer">
+                    Booking Sekarang
                   </a>
                   <Link className="btn btn-outline btn-lg" to="/schedule">
                     Lihat Jadwal Dokter
