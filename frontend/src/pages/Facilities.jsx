@@ -6,9 +6,6 @@ import { IoBusinessOutline, IoClose } from 'react-icons/io5'
 export default function Facilities() {
   const [fac, setFac] = useState([])
   const [loading, setLoading] = useState(true)
-  const [searchText, setSearchText] = useState('')
-  const [availability, setAvailability] = useState('all')
-  const [sortBy, setSortBy] = useState('name')
   const [selectedFacility, setSelectedFacility] = useState(null)
 
   useEffect(() => {
@@ -18,40 +15,7 @@ export default function Facilities() {
     }).catch(() => setLoading(false))
   }, [])
 
-  const filteredFacilities = fac
-    .filter(item => item.status_aktif !== false)
-    .filter(item => {
-      const keyword = searchText.trim().toLowerCase()
-      if (!keyword) return true
-      return [item.nama, item.deskripsi]
-        .filter(Boolean)
-        .some(value => String(value).toLowerCase().includes(keyword))
-    })
-    .filter(item => {
-      if (availability === 'available') return Number(item.jumlah_tersedia || 0) > 0
-      if (availability === 'unavailable') return Number(item.jumlah_tersedia || 0) === 0
-      return true
-    })
-    .sort((a, b) => {
-      if (sortBy === 'price-low') return Number(a.harga_mulai || 0) - Number(b.harga_mulai || 0)
-      if (sortBy === 'price-high') return Number(b.harga_mulai || 0) - Number(a.harga_mulai || 0)
-      return String(a.nama || '').localeCompare(String(b.nama || ''), 'id-ID')
-    })
-
-  // Tutup modal saat tekan ESC
-  useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === 'Escape') setSelectedFacility(null)
-    }
-    if (selectedFacility) {
-      window.addEventListener('keydown', handleEsc)
-      document.body.style.overflow = 'hidden'
-    }
-    return () => {
-      window.removeEventListener('keydown', handleEsc)
-      document.body.style.overflow = ''
-    }
-  }, [selectedFacility])
+  const activeFacilities = fac.filter(item => item.status_aktif !== false)
 
   const openModal = (facility) => {
     setSelectedFacility(facility)
@@ -63,80 +27,43 @@ export default function Facilities() {
 
   return (
     <div>
-      <div className="page-banner">
-        <h1>Fasilitas Kami</h1>
-        <p>Fasilitas modern dan lengkap untuk kenyamanan perawatan Anda</p>
+      <div className="page-banner" style={{ textAlign: 'left', background: 'linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%)', padding: '80px 24px', minHeight: '300px', display: 'flex', alignItems: 'center' }}>
+        <div className="container">
+          <h1 style={{ color: 'white', fontSize: '2.5rem', marginBottom: '16px', fontWeight: 'bold' }}>Layanan Khusus RSU PKU Muhammadiyah Sragen</h1>
+          <p style={{ color: 'white', fontSize: '1.1rem', opacity: 0.9, maxWidth: '800px', lineHeight: 1.6 }}>
+            RSU PKU Muhammadiyah Sragen selalu berkomitmen menghadirkan inovasi layanan untuk pasien. Didukung oleh Dokter, Perawat, Paramedis dan Staf yang profesional dan ramah melayani pasien. Serta didukung dengan peralatan medis modern dan terbaru, kami yakin RSU PKU Muhammadiyah Sragen akan selalu menjadi pilihan Anda dan Keluarga.
+          </p>
+        </div>
       </div>
 
-      <div className="section">
+      <div className="section" style={{ background: '#f8fafc', padding: '60px 0' }}>
         <div className="container">
-          {/* Filter */}
-          <div className="filter-bar">
-            <div className="filter-grid filter-grid-3">
-              <div>
-                <label className="filter-label">Cari Fasilitas</label>
-                <input
-                  type="text"
-                  placeholder="Ketik nama fasilitas..."
-                  value={searchText}
-                  onChange={e => setSearchText(e.target.value)}
-                  className="filter-input"
-                />
-              </div>
-              <div>
-                <label className="filter-label">Ketersediaan</label>
-                <select value={availability} onChange={e => setAvailability(e.target.value)} className="filter-select">
-                  <option value="all">Semua</option>
-                  <option value="available">Tersedia</option>
-                  <option value="unavailable">Tidak Tersedia</option>
-                </select>
-              </div>
-              <div>
-                <label className="filter-label">Urutkan</label>
-                <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="filter-select">
-                  <option value="name">Nama A-Z</option>
-                  <option value="price-low">Harga Terendah</option>
-                  <option value="price-high">Harga Tertinggi</option>
-                </select>
-              </div>
-            </div>
-            <p className="filter-count">
-              Menampilkan {filteredFacilities.length} dari {fac.filter(i => i.status_aktif !== false).length} fasilitas
-            </p>
-          </div>
-
           {/* Grid */}
           {loading ? (
             <div className="loading-spinner"><div className="spinner" /></div>
-          ) : filteredFacilities.length > 0 ? (
-            <div className="cards-grid cards-grid-3">
-              {filteredFacilities.map(f => (
-                <div key={f.id} className="card facility-card" style={{ cursor: 'pointer' }} onClick={() => openModal(f)}>
-                  {f.gambar ? (
-                    <img src={`${IMAGE_URL}${f.gambar}`} alt={f.nama} className="card-img" />
-                  ) : (
-                    <div className="card-img-placeholder"><IoBusinessOutline /></div>
-                  )}
-                  <div className="card-body">
-                    <h3>{f.nama}</h3>
-                    <p className="line-clamp-3" style={{ marginBottom: 12 }}>{f.deskripsi}</p>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span className="price-tag">
-                        {f.harga_mulai ? `Mulai Rp ${Number(f.harga_mulai).toLocaleString('id-ID')}` : 'Hubungi kami'}
-                      </span>
-                      <span className={Number(f.jumlah_tersedia || 0) > 0 ? 'badge-available' : 'badge-unavailable'}>
-                        {Number(f.jumlah_tersedia || 0) > 0 ? `${f.jumlah_tersedia} tersedia` : 'Penuh'}
-                      </span>
-                    </div>
+          ) : activeFacilities.length > 0 ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '30px' }}>
+              {activeFacilities.map(f => (
+                <div key={f.id} className="card facility-card" style={{ cursor: 'pointer', borderRadius: '16px', overflow: 'hidden', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', background: 'white', transition: 'transform 0.3s ease' }} onClick={() => openModal(f)}>
+                  <div style={{ width: '100%', height: '200px', overflow: 'hidden', background: '#e2e8f0' }}>
+                    {f.gambar ? (
+                      <img src={`${IMAGE_URL}${f.gambar}`} alt={f.nama} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
+                        <IoBusinessOutline size={64} />
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ padding: '20px', textAlign: 'center' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1e293b' }}>{f.nama}</h3>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="empty-state">
-              <IoBusinessOutline size={48} />
-              <p>Tidak ada fasilitas ditemukan</p>
-              <span>Coba ubah filter pencarian Anda</span>
+            <div className="empty-state" style={{ padding: '80px 0', background: 'white', borderRadius: '16px' }}>
+              <IoBusinessOutline size={48} style={{ color: '#cbd5e1' }} />
+              <p style={{ marginTop: '16px', color: '#64748b' }}>Tidak ada layanan khusus ditemukan</p>
             </div>
           )}
         </div>
