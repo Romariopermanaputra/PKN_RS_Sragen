@@ -127,9 +127,14 @@ export default function DoctorProfile() {
             )}
             
             <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'center' }}>
-              <button className="btn btn-primary btn-lg" onClick={() => alert('Fitur booking online sedang dalam pengembangan')}>
+              <a 
+                href={`https://wa.me/6287878091132?text=${encodeURIComponent(`Halo, saya ingin mendaftar booking jadwal untuk dokter ${doctor.nama}`)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-primary btn-lg"
+              >
                 Booking Jadwal Sekarang
-              </button>
+              </a>
             </div>
           </div>
 
