@@ -165,7 +165,7 @@ export default function ServiceDetail() {
                   <h4 style={{ color: 'white', marginBottom: '16px', fontSize: '1.1rem' }}>Layanan Lainnya</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {others.slice(0, 5).map(other => (
-                      <Link key={other.id} to={`/layanan/${other.slug || other.id}`} style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                      <Link key={other.id} to={`/layanan/${other.slug}`} style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                         <IoPlayOutline /> {other.nama}
                       </Link>
                     ))}

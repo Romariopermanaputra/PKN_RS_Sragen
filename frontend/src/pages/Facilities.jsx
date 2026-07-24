@@ -36,7 +36,7 @@ export default function Facilities() {
               {activeFacilities.map(f => (
                 <Link
                   key={f.id}
-                  to={`/layanan/${f.slug || f.id}`}
+                  to={`/layanan/${f.slug}`}
                   style={{ textDecoration: 'none' }}
                 >
                   <div

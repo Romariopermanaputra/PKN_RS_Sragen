@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 
 const normalizeService = (service) => ({
   id: service.id_layanan,
+  slug: service.slug || null,
   nama: service.nama_layanan,
   deskripsi: service.deskripsi_singkat || service.deskripsi_lengkap || '',
   gambar: service.gambar_banner || service.icon_url || null,
