@@ -36,7 +36,7 @@ export default function AppRoutes() {
         <Route path="contact" element={<Contact />} />
         <Route path="achievements" element={<Achievements />} />
         <Route path="layanan" element={<Facilities />} />
-        <Route path="service/:id" element={<ServiceDetail />} />
+        <Route path="layanan/:id" element={<ServiceDetail />} />
         <Route path="doctor/:id" element={<DoctorProfile />} />
       </Route>
 

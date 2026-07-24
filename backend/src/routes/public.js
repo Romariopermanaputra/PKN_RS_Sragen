@@ -28,6 +28,7 @@ router.get('/news', newsController.getAll);
 router.get('/news/:id', newsController.getById);
 router.get('/facilities', facilityController.getAll);
 router.get('/services', serviceController.getAll);
+router.get('/services/:slug', serviceController.getBySlug);
 router.get('/achievements', achievementController.getAll);
 router.get('/promotions', promotionController.getAllActive);
 router.get('/contact', contactController.get);

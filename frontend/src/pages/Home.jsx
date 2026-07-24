@@ -273,19 +273,19 @@ export default function Home() {
 
           <div className="layanan-unggulan-layout">
               <div className="layanan-unggulan-links">
-                <Link to="/service/trauma-center" className="service-pill">
+                <Link to="/layanan/trauma-center" className="service-pill">
                   <span>Trauma Center (One Day Service)</span>
                   <div className="service-pill-icon"><IoPlayOutline /></div>
                 </Link>
-                <Link to="/service/ct-scan" className="service-pill">
+                <Link to="/layanan/ct-scan" className="service-pill">
                   <span>CT Scan</span>
                   <div className="service-pill-icon"><IoPlayOutline /></div>
                 </Link>
-                <Link to="/service/hemodialisa" className="service-pill">
+                <Link to="/layanan/hemodialisa" className="service-pill">
                   <span>Hemodialisa</span>
                   <div className="service-pill-icon"><IoPlayOutline /></div>
                 </Link>
-                <Link to="/service/usg-4-dimensi" className="service-pill">
+                <Link to="/layanan/usg-4-dimensi" className="service-pill">
                   <span>USG 4 Dimensi</span>
                   <div className="service-pill-icon"><IoPlayOutline /></div>
                 </Link>
