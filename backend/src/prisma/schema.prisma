@@ -25,6 +25,9 @@ model dokter {
   nama_lengkap    String           @db.VarChar(150)
   foto_url        String?          @db.VarChar(255)
   deskripsi       String?          @db.Text
+  pendidikan      String?          @db.Text
+  pengalaman      String?          @db.Text
+  pelatihan       String?          @db.Text
   id_spesialis    Int?
   id_subspesialis Int?
   status_aktif    Boolean?         @default(true)

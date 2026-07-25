@@ -23,6 +23,9 @@ const normalizeDoctor = (doctor) => ({
   foto: doctor.foto_url ?? doctor.foto ?? null,
   foto_url: doctor.foto_url ?? doctor.foto ?? null,
   deskripsi: doctor.deskripsi ?? doctor.description ?? null,
+  pendidikan: doctor.pendidikan ?? null,
+  pengalaman: doctor.pengalaman ?? null,
+  pelatihan: doctor.pelatihan ?? null,
   status_aktif: doctor.status_aktif ?? true,
   schedules: Array.isArray(doctor.jadwal_praktek)
     ? doctor.jadwal_praktek.map((schedule) => ({
@@ -111,7 +114,7 @@ exports.getAll = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif } = req.body;
+    const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif, pendidikan, pengalaman, pelatihan } = req.body;
     let foto = null;
     if (req.file) {
       foto = await uploadFileToSupabase(req.file);
@@ -128,6 +131,9 @@ exports.create = async (req, res) => {
         id_spesialis: specialtyId,
         id_subspesialis: subspecialtyId,
         status_aktif: parseBoolean(status_aktif, true),
+        pendidikan: pendidikan || null,
+        pengalaman: pengalaman || null,
+        pelatihan: pelatihan || null,
       },
       include: {
         spesialis: { select: { nama_spesialis: true } },
@@ -140,7 +146,7 @@ exports.create = async (req, res) => {
     console.error('Error creating doctor:', error);
     res.status(500).json({ 
       message: 'Terjadi kesalahan saat menambah dokter',
-      error: error.message, // <-- Lihat pesan error asli di sini!
+      error: error.message,
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
@@ -149,7 +155,7 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif } = req.body;
+    const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif, pendidikan, pengalaman, pelatihan } = req.body;
     
     const existingDoctor = await prisma.dokter.findUnique({
       where: { id_dokter: Number(id) }
@@ -159,6 +165,9 @@ exports.update = async (req, res) => {
     
     if (nama || nama_lengkap) data.nama_lengkap = nama || nama_lengkap;
     if (deskripsi !== undefined) data.deskripsi = deskripsi;
+    if (pendidikan !== undefined) data.pendidikan = pendidikan || null;
+    if (pengalaman !== undefined) data.pengalaman = pengalaman || null;
+    if (pelatihan !== undefined) data.pelatihan = pelatihan || null;
     
     if (req.file) {
       data.foto_url = await uploadFileToSupabase(req.file);

@@ -10,6 +10,9 @@ const emptyForm = {
   spesialis: '',
   subspesialis: '',
   deskripsi: '',
+  pendidikan: '',
+  pengalaman: '',
+  pelatihan: '',
   status_aktif: true,
   foto: null,
 };
@@ -77,6 +80,9 @@ export default function DoctorsAdmin() {
     data.append('subspesialis', formData.subspesialis);
     data.append('deskripsi', formData.deskripsi);
     data.append('status_aktif', formData.status_aktif ? 'true' : 'false');
+    if (formData.pendidikan) data.append('pendidikan', formData.pendidikan);
+    if (formData.pengalaman) data.append('pengalaman', formData.pengalaman);
+    if (formData.pelatihan) data.append('pelatihan', formData.pelatihan);
     if (formData.foto) data.append('foto', formData.foto);
 
     try {
@@ -105,6 +111,9 @@ export default function DoctorsAdmin() {
       spesialis: doc.spesialis || '',
       subspesialis: doc.subspesialis || '',
       deskripsi: doc.deskripsi || '',
+      pendidikan: doc.pendidikan || '',
+      pengalaman: doc.pengalaman || '',
+      pelatihan: doc.pelatihan || '',
       status_aktif: doc.status_aktif ?? true,
       foto: null,
     });
@@ -203,10 +212,55 @@ export default function DoctorsAdmin() {
             <div className="admin-form-group">
               <label>Profil / Biografi</label>
               <textarea
-                rows="5"
+                rows="4"
                 value={formData.deskripsi}
                 onChange={e => setFormData({ ...formData, deskripsi: e.target.value })}
-                placeholder="Riwayat pendidikan, pengalaman, dan keahlian dokter..."
+                placeholder="Riwayat singkat, keahlian dokter..."
+              />
+            </div>
+
+            {/* Pendidikan */}
+            <div style={{ background: '#f8fafc', borderRadius: '8px', padding: '20px', marginBottom: '12px' }}>
+              <label style={{ fontWeight: 700, color: 'var(--primary-dark)', display: 'block', marginBottom: '6px' }}>
+                📚 Pendidikan
+              </label>
+              <p style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '10px' }}>Satu item per baris. Contoh: S1 Kedokteran UGM</p>
+              <textarea
+                rows="4"
+                value={formData.pendidikan}
+                onChange={e => setFormData({ ...formData, pendidikan: e.target.value })}
+                placeholder={`S1 Kedokteran Universitas Gadjah Mada\nSpesialisasi Anak Universitas Indonesia`}
+                style={{ fontFamily: 'monospace', fontSize: '0.875rem' }}
+              />
+            </div>
+
+            {/* Pengalaman */}
+            <div style={{ background: '#f8fafc', borderRadius: '8px', padding: '20px', marginBottom: '12px' }}>
+              <label style={{ fontWeight: 700, color: 'var(--primary-dark)', display: 'block', marginBottom: '6px' }}>
+                💼 Pengalaman
+              </label>
+              <p style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '10px' }}>Satu item per baris. Contoh: Dokter Spesialis Anak RS X (2015-2020)</p>
+              <textarea
+                rows="4"
+                value={formData.pengalaman}
+                onChange={e => setFormData({ ...formData, pengalaman: e.target.value })}
+                placeholder={`Dokter Spesialis Anak RS Cipto Mangunkusumo (2015-2020)\nKonsultan Pediatri RS PKU Muhammadiyah Sragen (2020-sekarang)`}
+                style={{ fontFamily: 'monospace', fontSize: '0.875rem' }}
+              />
+            </div>
+
+            {/* Pelatihan */}
+            <div style={{ background: '#f8fafc', borderRadius: '8px', padding: '20px', marginBottom: '12px' }}>
+              <label style={{ fontWeight: 700, color: 'var(--primary-dark)', display: 'block', marginBottom: '6px' }}>
+                🎖️ Pelatihan &amp; Sertifikasi
+              </label>
+              <p style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '10px' }}>Satu item per baris. Contoh: Pelatihan ACLS 2022</p>
+              <textarea
+                rows="4"
+                value={formData.pelatihan}
+                onChange={e => setFormData({ ...formData, pelatihan: e.target.value })}
+                placeholder={`Pelatihan ACLS (Advanced Cardiac Life Support) 2022\nSertifikasi PALS (Pediatric Advanced Life Support) 2021`}
+                style={{ fontFamily: 'monospace', fontSize: '0.875rem' }}
               />
             </div>
             <div className="admin-form-group">
