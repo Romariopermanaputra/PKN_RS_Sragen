@@ -14,6 +14,7 @@ const emptyForm = {
   pengalaman: '',
   existingPelatihans: [],
   pelatihanFiles: [],
+  existingFoto: null,
   status_aktif: true,
   foto: null,
 };
@@ -138,6 +139,7 @@ export default function DoctorsAdmin() {
       pengalaman: doc.pengalaman || '',
       existingPelatihans: parsedPelatihans,
       pelatihanFiles: [],
+      existingFoto: doc.foto || doc.foto_url || null,
       status_aktif: doc.status_aktif ?? true,
       foto: null,
     });
@@ -344,12 +346,42 @@ export default function DoctorsAdmin() {
                 </div>
               )}
             </div>
-            <div className="admin-form-group">
-              <label>Foto Dokter</label>
+            {/* Foto Dokter */}
+            <div style={{ background: '#f8fafc', borderRadius: '8px', padding: '20px', marginBottom: '12px' }}>
+              <label style={{ fontWeight: 700, color: 'var(--primary-dark)', display: 'block', marginBottom: '6px' }}>
+                📷 Foto Dokter
+              </label>
+              {isEditing && formData.existingFoto && !formData.foto && (
+                <div style={{ marginBottom: '12px' }}>
+                  <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>Foto Saat Ini:</p>
+                  <div style={{ position: 'relative', display: 'inline-block', width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', border: '2px solid #e2e8f0' }}>
+                    <img src={`${IMAGE_URL}${formData.existingFoto}`} alt="Foto Saat Ini" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                </div>
+              )}
+              {formData.foto ? (
+                <div style={{ marginBottom: '12px' }}>
+                  <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>Preview Foto Baru:</p>
+                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', border: '2px solid #10b981' }}>
+                      <img src={URL.createObjectURL(formData.foto)} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, foto: null })}
+                      style={{ position: 'absolute', top: -4, right: -4, background: 'rgba(239, 68, 68, 0.9)', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      title="Batalkan Foto Baru"
+                    >
+                      <i className="ti ti-x" style={{ fontSize: '0.8rem' }} />
+                    </button>
+                  </div>
+                </div>
+              ) : null}
               <input
                 type="file"
                 accept="image/*"
-                onChange={e => setFormData({ ...formData, foto: e.target.files[0] })}
+                onChange={e => e.target.files[0] && setFormData({ ...formData, foto: e.target.files[0] })}
+                style={{ fontSize: '0.85rem', padding: '8px', border: '1px dashed #cbd5e1', borderRadius: '6px', width: '100%', background: 'white' }}
               />
             </div>
             <div className="admin-form-actions">
