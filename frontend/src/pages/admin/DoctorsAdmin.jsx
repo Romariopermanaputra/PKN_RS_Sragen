@@ -97,10 +97,10 @@ export default function DoctorsAdmin() {
 
     try {
       if (isEditing) {
-        await api.put(`/admin/doctors/${formData.id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } });
+        await api.put(`/admin/doctors/${formData.id}`, data);
         showToast('Data dokter berhasil diperbarui!');
       } else {
-        await api.post('/admin/doctors', data, { headers: { 'Content-Type': 'multipart/form-data' } });
+        await api.post('/admin/doctors', data);
         showToast('Dokter baru berhasil ditambahkan!');
       }
       setFormData(emptyForm);
@@ -308,13 +308,36 @@ export default function DoctorsAdmin() {
                 type="file"
                 multiple
                 accept="image/*"
-                onChange={e => setFormData({ ...formData, pelatihanFiles: Array.from(e.target.files) })}
+                onChange={e => {
+                  const newFiles = Array.from(e.target.files);
+                  setFormData({ ...formData, pelatihanFiles: [...formData.pelatihanFiles, ...newFiles] });
+                  e.target.value = null; // reset input so same file can be selected again
+                }}
                 style={{ fontSize: '0.85rem', padding: '8px', border: '1px dashed #cbd5e1', borderRadius: '6px', width: '100%', background: 'white' }}
               />
               
               {formData.pelatihanFiles.length > 0 && (
-                <div style={{ marginTop: '12px', fontSize: '0.8rem', color: '#10b981' }}>
-                  <i className="ti ti-check" /> {formData.pelatihanFiles.length} file baru dipilih untuk ditambahkan.
+                <div style={{ marginTop: '16px' }}>
+                  <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>File Baru Akan Ditambahkan:</p>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    {formData.pelatihanFiles.map((file, idx) => (
+                      <div key={idx} style={{ position: 'relative', width: '100px', height: '80px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                        <img src={URL.createObjectURL(file)} alt="Preview Baru" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newArr = [...formData.pelatihanFiles];
+                            newArr.splice(idx, 1);
+                            setFormData({ ...formData, pelatihanFiles: newArr });
+                          }}
+                          style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(239, 68, 68, 0.9)', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          title="Batal Tambah"
+                        >
+                          <i className="ti ti-x" style={{ fontSize: '0.8rem' }} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
