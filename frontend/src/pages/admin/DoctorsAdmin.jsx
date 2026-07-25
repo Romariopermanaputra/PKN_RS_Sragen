@@ -11,7 +11,6 @@ const emptyForm = {
   subspesialis: '',
   deskripsi: '',
   pendidikan: '',
-  pendidikan: '',
   pengalaman: '',
   existingPelatihans: [],
   pelatihanFiles: [],
@@ -39,7 +38,6 @@ export default function DoctorsAdmin() {
   const [formData, setFormData] = useState(emptyForm);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState(null);
   const [toast, setToast] = useState(null);
   const [search, setSearch] = useState('');
   const [deletedPelatihans, setDeletedPelatihans] = useState([]);
@@ -84,7 +82,6 @@ export default function DoctorsAdmin() {
     data.append('subspesialis', formData.subspesialis);
     data.append('deskripsi', formData.deskripsi);
     data.append('status_aktif', formData.status_aktif ? 'true' : 'false');
-    if (formData.pendidikan) data.append('pendidikan', formData.pendidikan);
     if (formData.pendidikan) data.append('pendidikan', formData.pendidikan);
     if (formData.pengalaman) data.append('pengalaman', formData.pengalaman);
     if (formData.foto) data.append('foto', formData.foto);
