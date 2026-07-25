@@ -116,8 +116,16 @@ exports.create = async (req, res) => {
   try {
     const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif, pendidikan, pengalaman, pelatihan } = req.body;
     let foto = null;
-    if (req.file) {
-      foto = await uploadFileToSupabase(req.file);
+    if (req.files && req.files['foto'] && req.files['foto'][0]) {
+      foto = await uploadFileToSupabase(req.files['foto'][0]);
+    }
+    
+    let pelatihanUrls = [];
+    if (req.files && req.files['pelatihan_files']) {
+      for (const file of req.files['pelatihan_files']) {
+        const filename = await uploadFileToSupabase(file);
+        if (filename) pelatihanUrls.push(filename);
+      }
     }
 
     const specialtyId = await getSpecialtyId(spesialis);
@@ -133,7 +141,7 @@ exports.create = async (req, res) => {
         status_aktif: parseBoolean(status_aktif, true),
         pendidikan: pendidikan || null,
         pengalaman: pengalaman || null,
-        pelatihan: pelatihan || null,
+        pelatihan: pelatihanUrls.length > 0 ? JSON.stringify(pelatihanUrls) : (pelatihan || null),
       },
       include: {
         spesialis: { select: { nama_spesialis: true } },
@@ -155,7 +163,7 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif, pendidikan, pengalaman, pelatihan } = req.body;
+    const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif, pendidikan, pengalaman, deleted_pelatihans } = req.body;
     
     const existingDoctor = await prisma.dokter.findUnique({
       where: { id_dokter: Number(id) }
@@ -167,13 +175,49 @@ exports.update = async (req, res) => {
     if (deskripsi !== undefined) data.deskripsi = deskripsi;
     if (pendidikan !== undefined) data.pendidikan = pendidikan || null;
     if (pengalaman !== undefined) data.pengalaman = pengalaman || null;
-    if (pelatihan !== undefined) data.pelatihan = pelatihan || null;
     
-    if (req.file) {
-      data.foto_url = await uploadFileToSupabase(req.file);
+    if (req.files && req.files['foto'] && req.files['foto'][0]) {
+      data.foto_url = await uploadFileToSupabase(req.files['foto'][0]);
       if (existingDoctor && existingDoctor.foto_url) {
         await deleteFileFromSupabase(existingDoctor.foto_url);
       }
+    }
+    
+    let currentPelatihans = [];
+    if (existingDoctor && existingDoctor.pelatihan) {
+      try {
+        currentPelatihans = JSON.parse(existingDoctor.pelatihan);
+        if (!Array.isArray(currentPelatihans)) currentPelatihans = [existingDoctor.pelatihan];
+      } catch (e) {
+        currentPelatihans = [existingDoctor.pelatihan];
+      }
+    }
+    
+    if (deleted_pelatihans) {
+      try {
+        const toDelete = JSON.parse(deleted_pelatihans);
+        if (Array.isArray(toDelete)) {
+          for (const filename of toDelete) {
+            await deleteFileFromSupabase(filename);
+            currentPelatihans = currentPelatihans.filter(p => p !== filename);
+          }
+        }
+      } catch (e) {
+        console.error('Error parsing deleted_pelatihans', e);
+      }
+    }
+    
+    if (req.files && req.files['pelatihan_files']) {
+      for (const file of req.files['pelatihan_files']) {
+        const filename = await uploadFileToSupabase(file);
+        if (filename) currentPelatihans.push(filename);
+      }
+    }
+    
+    if (currentPelatihans.length > 0) {
+      data.pelatihan = JSON.stringify(currentPelatihans);
+    } else {
+      data.pelatihan = null;
     }
     
     if (spesialis !== undefined) {
@@ -276,6 +320,21 @@ exports.remove = async (req, res) => {
 
     if (existingDoctor.foto_url) {
       await deleteFileFromSupabase(existingDoctor.foto_url);
+    }
+    
+    if (existingDoctor.pelatihan) {
+      try {
+        const pelatihans = JSON.parse(existingDoctor.pelatihan);
+        if (Array.isArray(pelatihans)) {
+          for (const p of pelatihans) {
+            await deleteFileFromSupabase(p);
+          }
+        } else {
+          await deleteFileFromSupabase(existingDoctor.pelatihan);
+        }
+      } catch (e) {
+        await deleteFileFromSupabase(existingDoctor.pelatihan);
+      }
     }
 
     res.json({ message: 'Dokter berhasil dihapus' });

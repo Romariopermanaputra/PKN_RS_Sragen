@@ -51,8 +51,8 @@ router.get('/dashboard/activities', dashboardController.getActivities);
 // DOCTORS
 // =====================
 router.get('/doctors', doctorController.getAll);
-router.post('/doctors', upload.single('foto'), handleUploadError, doctorController.create);
-router.put('/doctors/:id', upload.single('foto'), handleUploadError, doctorController.update);
+router.post('/doctors', upload.fields([{ name: 'foto', maxCount: 1 }, { name: 'pelatihan_files', maxCount: 10 }]), handleUploadError, doctorController.create);
+router.put('/doctors/:id', upload.fields([{ name: 'foto', maxCount: 1 }, { name: 'pelatihan_files', maxCount: 10 }]), handleUploadError, doctorController.update);
 router.delete('/doctors/:id', doctorController.remove);
 
 // =====================

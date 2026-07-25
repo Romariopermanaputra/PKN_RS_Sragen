@@ -202,13 +202,18 @@ export default function DoctorProfile() {
 
           <AccordionSection title="PELATIHAN" icon={IoRibbonOutline} defaultOpen={true}>
             {pelatihanList.length > 0 ? (
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
                 {pelatihanList.map((item, i) => (
-                  <li key={i} style={{ padding: '10px 0', borderBottom: i < pelatihanList.length - 1 ? '1px solid #f0f0f0' : 'none', color: 'var(--text)', fontSize: '0.95rem' }}>
-                    {item}
-                  </li>
+                  <div key={i} style={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0', aspectRatio: '4/3', background: '#f8fafc' }}>
+                    <img 
+                      src={item.startsWith('http') ? item : `${IMAGE_URL}${item}`} 
+                      alt={`Sertifikat ${i+1}`} 
+                      style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+                      onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = `<div style="padding: 10px; font-size: 0.8rem; color: #64748b; text-align: center;">${item}</div>`; }}
+                    />
+                  </div>
                 ))}
-              </ul>
+              </div>
             ) : (
               <p style={{ color: '#9ca3af', fontStyle: 'italic', textAlign: 'center', padding: '16px 0' }}>Maaf, data tidak tersedia</p>
             )}

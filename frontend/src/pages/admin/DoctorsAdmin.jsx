@@ -11,8 +11,10 @@ const emptyForm = {
   subspesialis: '',
   deskripsi: '',
   pendidikan: '',
+  pendidikan: '',
   pengalaman: '',
-  pelatihan: '',
+  existingPelatihans: [],
+  pelatihanFiles: [],
   status_aktif: true,
   foto: null,
 };
@@ -38,7 +40,9 @@ export default function DoctorsAdmin() {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
+  const [toast, setToast] = useState(null);
   const [search, setSearch] = useState('');
+  const [deletedPelatihans, setDeletedPelatihans] = useState([]);
 
   const location = useLocation();
   const formRef = useRef(null);
@@ -81,9 +85,18 @@ export default function DoctorsAdmin() {
     data.append('deskripsi', formData.deskripsi);
     data.append('status_aktif', formData.status_aktif ? 'true' : 'false');
     if (formData.pendidikan) data.append('pendidikan', formData.pendidikan);
+    if (formData.pendidikan) data.append('pendidikan', formData.pendidikan);
     if (formData.pengalaman) data.append('pengalaman', formData.pengalaman);
-    if (formData.pelatihan) data.append('pelatihan', formData.pelatihan);
     if (formData.foto) data.append('foto', formData.foto);
+    
+    if (formData.pelatihanFiles && formData.pelatihanFiles.length > 0) {
+      formData.pelatihanFiles.forEach(file => {
+        data.append('pelatihan_files', file);
+      });
+    }
+    if (deletedPelatihans.length > 0) {
+      data.append('deleted_pelatihans', JSON.stringify(deletedPelatihans));
+    }
 
     try {
       if (isEditing) {
@@ -105,6 +118,16 @@ export default function DoctorsAdmin() {
   };
 
   const handleEdit = (doc) => {
+    let parsedPelatihans = [];
+    if (doc.pelatihan) {
+      try {
+        parsedPelatihans = JSON.parse(doc.pelatihan);
+        if (!Array.isArray(parsedPelatihans)) parsedPelatihans = [doc.pelatihan];
+      } catch (e) {
+        parsedPelatihans = [doc.pelatihan];
+      }
+    }
+
     setFormData({
       id: doc.id,
       nama: doc.nama || '',
@@ -113,10 +136,12 @@ export default function DoctorsAdmin() {
       deskripsi: doc.deskripsi || '',
       pendidikan: doc.pendidikan || '',
       pengalaman: doc.pengalaman || '',
-      pelatihan: doc.pelatihan || '',
+      existingPelatihans: parsedPelatihans,
+      pelatihanFiles: [],
       status_aktif: doc.status_aktif ?? true,
       foto: null,
     });
+    setDeletedPelatihans([]);
     setIsEditing(true);
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -132,7 +157,7 @@ export default function DoctorsAdmin() {
     }
   };
 
-  const handleCancel = () => { setIsEditing(false); setFormData(emptyForm); };
+  const handleCancel = () => { setIsEditing(false); setFormData(emptyForm); setDeletedPelatihans([]); };
 
   const filtered = doctors.filter(d =>
     d.nama?.toLowerCase().includes(search.toLowerCase()) ||
@@ -254,14 +279,47 @@ export default function DoctorsAdmin() {
               <label style={{ fontWeight: 700, color: 'var(--primary-dark)', display: 'block', marginBottom: '6px' }}>
                 🎖️ Pelatihan &amp; Sertifikasi
               </label>
-              <p style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '10px' }}>Satu item per baris. Contoh: Pelatihan ACLS 2022</p>
-              <textarea
-                rows="4"
-                value={formData.pelatihan}
-                onChange={e => setFormData({ ...formData, pelatihan: e.target.value })}
-                placeholder={`Pelatihan ACLS (Advanced Cardiac Life Support) 2022\nSertifikasi PALS (Pediatric Advanced Life Support) 2021`}
-                style={{ fontFamily: 'monospace', fontSize: '0.875rem' }}
+              <p style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '16px' }}>
+                Upload gambar sertifikat (opsional). Anda dapat memilih beberapa file sekaligus.
+              </p>
+              
+              {isEditing && formData.existingPelatihans.length > 0 && (
+                <div style={{ marginBottom: '16px' }}>
+                  <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>Sertifikat Tersimpan:</p>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    {formData.existingPelatihans.map((filename, idx) => {
+                      if (deletedPelatihans.includes(filename)) return null;
+                      return (
+                        <div key={idx} style={{ position: 'relative', width: '100px', height: '80px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                          <img src={`${IMAGE_URL}${filename}`} alt="Sertifikat" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <button
+                            type="button"
+                            onClick={() => setDeletedPelatihans([...deletedPelatihans, filename])}
+                            style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(239, 68, 68, 0.9)', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            title="Hapus Sertifikat"
+                          >
+                            <i className="ti ti-trash" style={{ fontSize: '0.8rem' }} />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={e => setFormData({ ...formData, pelatihanFiles: Array.from(e.target.files) })}
+                style={{ fontSize: '0.85rem', padding: '8px', border: '1px dashed #cbd5e1', borderRadius: '6px', width: '100%', background: 'white' }}
               />
+              
+              {formData.pelatihanFiles.length > 0 && (
+                <div style={{ marginTop: '12px', fontSize: '0.8rem', color: '#10b981' }}>
+                  <i className="ti ti-check" /> {formData.pelatihanFiles.length} file baru dipilih untuk ditambahkan.
+                </div>
+              )}
             </div>
             <div className="admin-form-group">
               <label>Foto Dokter</label>
