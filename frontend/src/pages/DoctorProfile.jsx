@@ -135,14 +135,10 @@ export default function DoctorProfile() {
               </span>
               <h2 style={{ fontSize: '2rem', color: 'var(--primary-dark)', marginBottom: '20px' }}>{doctor.nama}</h2>
 
-              {doctor.deskripsi && (
-                <>
-                  <h3 style={{ fontSize: '1.1rem', marginBottom: '10px', color: 'var(--text-heading)' }}>Profil &amp; Biografi</h3>
-                  <div style={{ color: 'var(--text)', lineHeight: 1.8, fontSize: '1rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                    {doctor.deskripsi}
-                  </div>
-                </>
-              )}
+              <h3 style={{ fontSize: '1.1rem', marginBottom: '10px', color: 'var(--text-heading)' }}>Profil &amp; Biografi</h3>
+              <div style={{ color: 'var(--text)', lineHeight: 1.8, fontSize: '1rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                {doctor.deskripsi || `${doctor.nama} adalah dokter spesialis ${doctor.spesialis} di RSU PKU Muhammadiyah Sragen yang berdedikasi tinggi dalam melayani pasien.`}
+              </div>
 
               <div style={{ marginTop: '28px' }}>
                 <a
@@ -153,6 +149,34 @@ export default function DoctorProfile() {
                   Booking Sekarang
                 </a>
               </div>
+            </div>
+          </div>
+
+          {/* Schedule Section - diletakkan di atas accordion */}
+          <div style={{ background: 'white', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-md)', padding: '32px 28px', marginBottom: '20px' }}>
+            <h3 style={{ fontSize: '1.3rem', color: 'var(--primary-dark)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <IoCalendarOutline /> Jadwal Praktik
+            </h3>
+            <p style={{ color: 'var(--text-light)', marginBottom: '0', fontSize: '0.9rem' }}>
+              Jadwal dapat berubah sewaktu-waktu. Silakan hubungi bagian pendaftaran untuk konfirmasi.
+            </p>
+
+            {doctor.schedules && doctor.schedules.length > 0 ? (
+              renderScheduleTable(doctor.schedules)
+            ) : (
+              <div style={{ background: 'var(--accent-light)', color: '#92600B', padding: '16px 24px', borderRadius: 'var(--radius-sm)', border: '1px solid #F0E68C', marginTop: '20px' }}>
+                Jadwal belum tersedia untuk dokter ini.
+              </div>
+            )}
+
+            <div style={{ marginTop: '28px', display: 'flex', justifyContent: 'center' }}>
+              <a
+                href={`https://wa.me/6287878091132?text=${encodeURIComponent(`Halo, saya ingin mendaftar booking jadwal untuk dokter ${doctor.nama}`)}`}
+                target="_blank" rel="noreferrer"
+                className="btn btn-primary btn-lg"
+              >
+                Booking Jadwal Sekarang
+              </a>
             </div>
           </div>
 
@@ -198,34 +222,6 @@ export default function DoctorProfile() {
               <p style={{ color: '#9ca3af', fontStyle: 'italic', textAlign: 'center', padding: '16px 0' }}>Maaf, data tidak tersedia</p>
             )}
           </AccordionSection>
-
-          {/* Schedule Section */}
-          <div style={{ background: 'white', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-md)', padding: '32px 28px', marginTop: '20px' }}>
-            <h3 style={{ fontSize: '1.3rem', color: 'var(--primary-dark)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <IoCalendarOutline /> Jadwal Praktik
-            </h3>
-            <p style={{ color: 'var(--text-light)', marginBottom: '0', fontSize: '0.9rem' }}>
-              Jadwal dapat berubah sewaktu-waktu. Silakan hubungi bagian pendaftaran untuk konfirmasi.
-            </p>
-
-            {doctor.schedules && doctor.schedules.length > 0 ? (
-              renderScheduleTable(doctor.schedules)
-            ) : (
-              <div style={{ background: 'var(--accent-light)', color: '#92600B', padding: '16px 24px', borderRadius: 'var(--radius-sm)', border: '1px solid #F0E68C', marginTop: '20px' }}>
-                Jadwal belum tersedia untuk dokter ini.
-              </div>
-            )}
-
-            <div style={{ marginTop: '28px', display: 'flex', justifyContent: 'center' }}>
-              <a
-                href={`https://wa.me/6287878091132?text=${encodeURIComponent(`Halo, saya ingin mendaftar booking jadwal untuk dokter ${doctor.nama}`)}`}
-                target="_blank" rel="noreferrer"
-                className="btn btn-primary btn-lg"
-              >
-                Booking Jadwal Sekarang
-              </a>
-            </div>
-          </div>
 
         </div>
       </div>
