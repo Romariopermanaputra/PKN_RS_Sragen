@@ -108,7 +108,10 @@ export default function DoctorsAdmin() {
       fetchDoctors();
       fetchSpecialties();
     } catch (err) {
-      showToast('Gagal menyimpan data dokter.', 'error');
+      console.error('Error saving doctor:', err);
+      const errMsg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Unknown error';
+      console.error('Backend error:', err?.response?.data);
+      showToast(`Gagal menyimpan: ${errMsg}`, 'error');
     } finally {
       setLoading(false);
     }
