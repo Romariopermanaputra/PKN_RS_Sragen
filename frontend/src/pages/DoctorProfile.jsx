@@ -169,15 +169,6 @@ export default function DoctorProfile() {
               </div>
             )}
 
-            <div style={{ marginTop: '28px', display: 'flex', justifyContent: 'center' }}>
-              <a
-                href={`https://wa.me/6287878091132?text=${encodeURIComponent(`Halo, saya ingin mendaftar booking jadwal untuk dokter ${doctor.nama}`)}`}
-                target="_blank" rel="noreferrer"
-                className="btn btn-primary btn-lg"
-              >
-                Booking Jadwal Sekarang
-              </a>
-            </div>
           </div>
 
           {/* Accordion Sections */}

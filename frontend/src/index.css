@@ -207,13 +207,16 @@ p { margin-bottom: 1rem; line-height: 1.75; }
 
 .nav-links .nav-item:hover {
   color: var(--primary);
-  background: var(--primary-light);
 }
 
 .nav-links .nav-item.active {
   color: var(--primary);
-  background: var(--primary-light);
   font-weight: 600;
+}
+
+.nav-links .nav-item:focus,
+.nav-links .nav-item:focus-visible {
+  outline: none;
 }
 
 .nav-links .nav-item.active::after {
