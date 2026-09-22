@@ -116,7 +116,9 @@ export default function Doctors() {
                     <p className="doctor-card-desc">
                       {d.deskripsi 
                         ? (d.deskripsi.length > 120 ? d.deskripsi.substring(0, 120) + '...' : d.deskripsi)
-                        : `${d.nama} adalah dokter spesialis ${d.spesialis} yang berpengalaman dalam memberikan pelayanan kesehatan terbaik.`}
+                        : (d.spesialis && d.spesialis.toLowerCase() !== 'umum'
+                            ? `${d.nama} adalah dokter spesialis ${d.spesialis} yang berpengalaman dalam memberikan pelayanan kesehatan terbaik.`
+                            : `${d.nama} adalah dokter umum yang berpengalaman dalam memberikan pelayanan kesehatan terbaik.`)}
                     </p>
                     
                     <div className="doctor-card-actions">

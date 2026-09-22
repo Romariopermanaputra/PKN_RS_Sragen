@@ -11,7 +11,7 @@ async function main() {
       gambar: '1783250476218-585688013.png'
     }
   });
-  
+
   const news2 = await prisma.news.create({
     data: {
       judul: 'Fasilitas Baru Telah Hadir',
