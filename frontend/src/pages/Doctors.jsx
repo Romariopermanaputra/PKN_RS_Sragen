@@ -7,7 +7,7 @@ export default function Doctors() {
   const [doctors, setDoctors] = useState([])
   const [specialties, setSpecialties] = useState([])
   const [subspecialties, setSubspecialties] = useState([])
-  
+
   // Filter states
   const [selectedSpecialty, setSelectedSpecialty] = useState('')
   const [selectedSubspecialty, setSelectedSubspecialty] = useState('')
@@ -88,7 +88,7 @@ export default function Doctors() {
               CARI
             </button>
           </div>
-          
+
           <div style={{ marginTop: '40px', marginBottom: '24px', color: 'var(--text-light)', fontSize: '0.95rem' }}>
             Menampilkan {filteredDoctors.length} dari {doctors.length} dokter
           </div>
@@ -112,15 +112,15 @@ export default function Doctors() {
                   <div className="doctor-card-content">
                     <span className="doctor-card-specialty">{d.spesialis}</span>
                     <h3 className="doctor-card-name">{d.nama}</h3>
-                    
+
                     <p className="doctor-card-desc">
-                      {d.deskripsi 
+                      {d.deskripsi
                         ? (d.deskripsi.length > 120 ? d.deskripsi.substring(0, 120) + '...' : d.deskripsi)
                         : (d.spesialis && d.spesialis.toLowerCase() !== 'umum'
-                            ? `${d.nama} adalah dokter spesialis ${d.spesialis} yang berpengalaman dalam memberikan pelayanan kesehatan terbaik.`
-                            : `${d.nama} adalah dokter umum yang berpengalaman dalam memberikan pelayanan kesehatan terbaik.`)}
+                          ? `${d.nama} adalah dokter ${d.spesialis} yang berpengalaman dalam memberikan pelayanan kesehatan terbaik.`
+                          : `${d.nama} adalah dokter umum yang berpengalaman dalam memberikan pelayanan kesehatan terbaik.`)}
                     </p>
-                    
+
                     <div className="doctor-card-actions">
                       <Link to={`/doctor/${d.id}`} className="doctor-card-link">
                         Lihat Jadwal <IoArrowForwardOutline />
